@@ -38,6 +38,15 @@ export function Header() {
             <span>Bandingkan</span>
           </Link>
           <Link
+            href="/radar-harga"
+            className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold text-emerald-800 transition-colors hover:bg-emerald-50 hover:text-emerald-900"
+          >
+            <span>Radar Harga</span>
+            <span className="rounded bg-emerald-100 px-1.5 py-0.2 text-[10px] font-extrabold uppercase tracking-wide text-emerald-800">
+              Baru
+            </span>
+          </Link>
+          <Link
             href="/shopee-fee"
             className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-primary-700 transition-colors hover:bg-stone-200/50 hover:text-primary-900"
           >

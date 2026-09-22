@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/compare/shopee-vs-tokopedia',
     '/compare/shopee-vs-tiktok-shop',
     '/compare/tokopedia-vs-tiktok-shop',
+    '/radar-harga',
   ];
 
   const lastModified = new Date();

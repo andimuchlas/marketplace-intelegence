@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { SlidersHorizontal, ArrowRight, RotateCcw, Check, Sparkles } from 'lucide-react';
+import { SlidersHorizontal, ArrowRight, RotateCcw, Check, Sparkles, Target } from 'lucide-react';
 import { MarketplaceId, CalculatorInput } from '@/domain/calculator/types';
 import {
   MARKETPLACE_CONFIGS,
@@ -17,6 +17,7 @@ import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { ProfitSignatureCard } from './ProfitSignatureCard';
 import { FeeBreakdownDrawer } from './FeeBreakdownDrawer';
 import { siteConfig } from '@/config/site';
+import { formatRupiah } from '@/lib/formatting/currency';
 
 interface MarketplaceCalculatorProps {
   initialMarketplaceId?: MarketplaceId;
@@ -38,6 +39,10 @@ export function MarketplaceCalculator({
   const [affiliatePercentage, setAffiliatePercentage] = useState<number>(5);
   const [voucherCost, setVoucherCost] = useState<number>(0);
   const [shippingSubsidy, setShippingSubsidy] = useState<number>(0);
+
+  // Target margin reverse calculator state
+  const [showTargetSolver, setShowTargetSolver] = useState(false);
+  const [targetMarginPct, setTargetMarginPct] = useState<number>(20);
 
   // Active marketplace config
   const config = useMemo(() => getMarketplaceConfig(marketplaceId), [marketplaceId]);
@@ -108,6 +113,24 @@ export function MarketplaceCalculator({
   // Run calculation
   const result = useMemo(() => calculateProfit(currentInput, config), [currentInput, config]);
 
+  // Target Margin Solver: estimates selling price for desired target margin
+  const recommendedPriceForTarget = useMemo(() => {
+    const targetMarginRate = Math.min(0.8, Math.max(0.01, targetMarginPct / 100));
+    const fixedCosts = productCost + advertisingCost + voucherCost + shippingSubsidy;
+    // Estimate variable commission rate
+    let estimatedVarRate = (affiliatePercentage || 0) / 100;
+    for (const rule of config.rules) {
+      if (rule.applicableTiers && !rule.applicableTiers.includes(sellerTierId)) continue;
+      const rate = rule.applicableCategories?.[categoryId] ?? rule.percentageRate;
+      estimatedVarRate += rate;
+    }
+    const divisor = 1 - targetMarginRate - estimatedVarRate;
+    if (divisor <= 0.05) return Math.round(fixedCosts * 3);
+    const solved = Math.ceil(fixedCosts / divisor);
+    // Round to nearest 500 or 1000 for retail appeal
+    return Math.ceil(solved / 500) * 500;
+  }, [targetMarginPct, productCost, advertisingCost, voucherCost, shippingSubsidy, affiliatePercentage, config, sellerTierId, categoryId]);
+
   // Run 4-way comparison for preview pills
   const comparisonResult = useMemo(() => {
     return compareMarketplaces(currentInput, getAllMarketplaceConfigs());
@@ -161,7 +184,7 @@ export function MarketplaceCalculator({
           </div>
         </div>
 
-        {/* Core Inputs: Selling Price & Product Cost */}
+        {/* Core Inputs: Selling Price & Product Cost with Quick Steps */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <CurrencyInput
             id="sellingPrice"
@@ -169,7 +192,8 @@ export function MarketplaceCalculator({
             value={sellingPrice}
             onChange={setSellingPrice}
             placeholder="100.000"
-            hint="Harga yang dibayar pembeli"
+            hint="Harga dibayar pembeli"
+            quickSteps={[5000, 10000, 25000, 50000]}
             required
           />
           <CurrencyInput
@@ -178,30 +202,96 @@ export function MarketplaceCalculator({
             value={productCost}
             onChange={setProductCost}
             placeholder="60.000"
-            hint="Biaya kulakan / bahan baku"
+            hint="Biaya kulakan / bahan"
+            quickSteps={[5000, 10000, 25000]}
             required
           />
         </div>
 
-        {/* Secondary Inputs: Ads, Affiliate, Tier, Category */}
+        {/* Target Margin Solver Banner / Toggle */}
+        <div className="mt-4 rounded-xl border border-emerald-200/80 bg-emerald-50/50 p-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-emerald-700" />
+              <span className="text-xs font-bold text-emerald-950">
+                Punya target margin tertentu?
+              </span>
+              <span className="hidden sm:inline text-xs text-emerald-800">
+                Cari harga jual ideal otomatis berdasarkan modal Anda.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowTargetSolver(!showTargetSolver)}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 underline hover:text-emerald-900"
+            >
+              <span>{showTargetSolver ? 'Sembunyikan Solver' : 'Buka Target Solver'}</span>
+            </button>
+          </div>
+
+          {showTargetSolver && (
+            <div className="mt-3 border-t border-emerald-200/80 pt-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <label htmlFor="targetMarginInput" className="text-xs font-medium text-emerald-900">
+                    Target Margin:
+                  </label>
+                  <div className="flex items-center rounded-lg border border-emerald-300 bg-white px-2 py-1 shadow-sm">
+                    <input
+                      id="targetMarginInput"
+                      type="number"
+                      min="5"
+                      max="80"
+                      value={targetMarginPct}
+                      onChange={(e) => setTargetMarginPct(Number(e.target.value))}
+                      className="w-12 text-center font-mono text-xs font-bold text-emerald-900 focus:outline-none"
+                    />
+                    <span className="font-mono text-xs text-emerald-700">%</span>
+                  </div>
+                </div>
+
+                <div className="text-xs text-emerald-950">
+                  Rekomendasi Harga Jual:{' '}
+                  <strong className="font-mono text-sm text-emerald-800">
+                    {formatRupiah(recommendedPriceForTarget)}
+                  </strong>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setSellingPrice(recommendedPriceForTarget)}
+                  className="rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800 active:scale-95 sm:ml-auto"
+                >
+                  Terapkan Harga Ini
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Secondary Inputs: 4 Perfectly Aligned Columns */}
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Column 1: Biaya Iklan */}
           <CurrencyInput
             id="advertisingCost"
-            label="Biaya Iklan (per unit)"
+            label="Biaya Iklan / Unit"
             value={advertisingCost}
             onChange={setAdvertisingCost}
             placeholder="0"
-            hint="Shopee Ads / CPAS / GMV Max"
+            hint="Iklan / GMV Max"
           />
 
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between">
-              <label htmlFor="affiliatePct" className="font-display text-xs font-semibold text-primary-800 sm:text-sm">
+          {/* Column 2: Komisi Affiliate */}
+          <div className="flex flex-col">
+            <div className="flex h-10 items-end justify-between pb-1.5">
+              <label htmlFor="affiliatePct" className="font-display text-xs font-semibold leading-tight text-primary-800 sm:text-sm">
                 Komisi Affiliate
               </label>
-              <span className="text-[11px] text-primary-400">Kreator video/live</span>
+              <span className="text-[11px] leading-tight text-primary-400 truncate max-w-[50%] text-right">
+                Kreator live
+              </span>
             </div>
-            <div className="relative flex items-center rounded-xl border border-stone-300 bg-white shadow-subtle focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20">
+            <div className="relative flex h-12 w-full items-center rounded-xl border border-stone-300 bg-white shadow-subtle transition-all focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20">
               <input
                 id="affiliatePct"
                 type="number"
@@ -211,48 +301,62 @@ export function MarketplaceCalculator({
                 value={affiliatePercentage === 0 ? '' : affiliatePercentage}
                 onChange={(e) => setAffiliatePercentage(Math.max(0, Math.min(100, Number(e.target.value))))}
                 placeholder="0"
-                className="w-full rounded-xl bg-transparent py-2.5 pl-3.5 pr-8 font-mono text-base font-semibold tracking-tight text-primary-900 tabular-nums placeholder:text-stone-300 focus:outline-none sm:text-lg"
+                className="h-full w-full rounded-xl bg-transparent pl-3.5 pr-8 font-mono text-base font-semibold tracking-tight text-primary-900 tabular-nums placeholder:text-stone-300 focus:outline-none sm:text-lg"
               />
               <span className="absolute right-3.5 font-mono text-sm font-semibold text-primary-500">%</span>
             </div>
           </div>
 
-          {/* Seller Tier Select */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="sellerTier" className="font-display text-xs font-semibold text-primary-800 sm:text-sm">
-              Status / Tier Toko
-            </label>
-            <select
-              id="sellerTier"
-              value={sellerTierId}
-              onChange={(e) => setSellerTierId(e.target.value)}
-              className="w-full rounded-xl border border-stone-300 bg-white py-3 px-3 text-xs font-medium text-primary-900 shadow-subtle focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 sm:text-sm"
-            >
-              {config.sellerTiers.map((tier) => (
-                <option key={tier.id} value={tier.id}>
-                  {tier.name}
-                </option>
-              ))}
-            </select>
+          {/* Column 3: Seller Tier Select */}
+          <div className="flex flex-col">
+            <div className="flex h-10 items-end justify-between pb-1.5">
+              <label htmlFor="sellerTier" className="font-display text-xs font-semibold leading-tight text-primary-800 sm:text-sm">
+                Status Toko
+              </label>
+              <span className="text-[11px] leading-tight text-primary-400 truncate max-w-[50%] text-right">
+                Tingkatan seller
+              </span>
+            </div>
+            <div className="relative flex h-12 w-full items-center rounded-xl border border-stone-300 bg-white shadow-subtle transition-all focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20">
+              <select
+                id="sellerTier"
+                value={sellerTierId}
+                onChange={(e) => setSellerTierId(e.target.value)}
+                className="h-full w-full rounded-xl bg-transparent px-3 font-display text-xs font-semibold text-primary-900 focus:outline-none sm:text-sm cursor-pointer"
+              >
+                {config.sellerTiers.map((tier) => (
+                  <option key={tier.id} value={tier.id}>
+                    {tier.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          {/* Category Select */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="categoryGroup" className="font-display text-xs font-semibold text-primary-800 sm:text-sm">
-              Kategori Produk
-            </label>
-            <select
-              id="categoryGroup"
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full rounded-xl border border-stone-300 bg-white py-3 px-3 text-xs font-medium text-primary-900 shadow-subtle focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 sm:text-sm"
-            >
-              {config.categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+          {/* Column 4: Category Select */}
+          <div className="flex flex-col">
+            <div className="flex h-10 items-end justify-between pb-1.5">
+              <label htmlFor="categoryGroup" className="font-display text-xs font-semibold leading-tight text-primary-800 sm:text-sm">
+                Kategori Produk
+              </label>
+              <span className="text-[11px] leading-tight text-primary-400 truncate max-w-[50%] text-right">
+                Kelompok fee
+              </span>
+            </div>
+            <div className="relative flex h-12 w-full items-center rounded-xl border border-stone-300 bg-white shadow-subtle transition-all focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20">
+              <select
+                id="categoryGroup"
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                className="h-full w-full rounded-xl bg-transparent px-3 font-display text-xs font-semibold text-primary-900 focus:outline-none sm:text-sm cursor-pointer"
+              >
+                {config.categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
@@ -306,7 +410,7 @@ export function MarketplaceCalculator({
         </div>
       </div>
 
-      {/* 2. Result Section (Prominent Signature Card) */}
+      {/* 2. Result Section (Prominent Signature Card with Copy, Anatomy Bar & Margin Barometer) */}
       <div className="mt-6">
         <ProfitSignatureCard
           result={result}

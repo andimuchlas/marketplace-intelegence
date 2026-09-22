@@ -12,6 +12,7 @@ interface CurrencyInputProps {
   hint?: string;
   disabled?: boolean;
   required?: boolean;
+  quickSteps?: number[]; // e.g. [5000, 10000, 25000, 50000]
   className?: string;
 }
 
@@ -24,6 +25,7 @@ export function CurrencyInput({
   hint,
   disabled = false,
   required = false,
+  quickSteps,
   className = '',
 }: CurrencyInputProps) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,18 +34,28 @@ export function CurrencyInput({
     onChange(parsed);
   };
 
+  const handleStep = (increment: number) => {
+    onChange(Math.max(0, value + increment));
+  };
+
   const displayValue = value > 0 ? formatRupiah(value, false) : '';
 
   return (
-    <div className={`flex flex-col gap-1.5 ${className}`}>
-      <div className="flex items-center justify-between">
-        <label htmlFor={id} className="font-display text-xs font-semibold text-primary-800 sm:text-sm">
+    <div className={`flex flex-col ${className}`}>
+      {/* Normalized Header: exactly h-10 with flex items-end to ensure perfect horizontal alignment */}
+      <div className="flex h-10 items-end justify-between pb-1.5">
+        <label htmlFor={id} className="font-display text-xs font-semibold leading-tight text-primary-800 sm:text-sm">
           {label} {required && <span className="text-rose-500">*</span>}
         </label>
-        {hint && <span className="text-[11px] text-primary-400">{hint}</span>}
+        {hint && (
+          <span className="text-[11px] leading-tight text-primary-400 truncate max-w-[50%] text-right" title={hint}>
+            {hint}
+          </span>
+        )}
       </div>
 
-      <div className="relative flex items-center rounded-xl border border-stone-300 bg-white shadow-subtle transition-all focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20">
+      {/* Normalized Input Container: exactly h-12 (48px) */}
+      <div className="relative flex h-12 w-full items-center rounded-xl border border-stone-300 bg-white shadow-subtle transition-all focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20">
         <span className="flex select-none items-center pl-3.5 pr-2 font-mono text-sm font-semibold text-primary-500">
           Rp
         </span>
@@ -56,9 +68,25 @@ export function CurrencyInput({
           onChange={handleChange}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full rounded-xl bg-transparent py-2.5 pr-3.5 font-mono text-base font-semibold tracking-tight text-primary-900 tabular-nums placeholder:text-stone-300 focus:outline-none sm:text-lg"
+          className="h-full w-full rounded-xl bg-transparent pr-3.5 font-mono text-base font-semibold tracking-tight text-primary-900 tabular-nums placeholder:text-stone-300 focus:outline-none sm:text-lg"
         />
       </div>
+
+      {/* Optional Quick Step Chips */}
+      {quickSteps && quickSteps.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          {quickSteps.map((step) => (
+            <button
+              key={step}
+              type="button"
+              onClick={() => handleStep(step)}
+              className="rounded-lg border border-stone-200 bg-stone-50 px-2 py-1 font-mono text-[11px] font-medium text-primary-700 transition-colors hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-800 active:scale-95"
+            >
+              +{step >= 1000 ? `${step / 1000}rb` : `${step}`}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

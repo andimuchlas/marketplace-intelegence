@@ -1,9 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Target, Info, CheckCircle2 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Target, Info, CheckCircle2, Copy, Check } from 'lucide-react';
 import { CalculationResult } from '@/domain/calculator/types';
 import { formatRupiah, formatPercentage } from '@/lib/formatting/currency';
+import { CostAnatomyBar } from './CostAnatomyBar';
+import { MarginHealthBarometer } from './MarginHealthBarometer';
 
 interface ProfitSignatureCardProps {
   result: CalculationResult;
@@ -24,8 +27,28 @@ export function ProfitSignatureCard({
   previewItems = [],
   onSelectPreview,
 }: ProfitSignatureCardProps) {
+  const [copied, setCopied] = useState(false);
   const isProfitable = result.netProfit > 0;
   const isBreakEven = result.netProfit === 0;
+
+  const handleCopySummary = () => {
+    const summaryText = `📦 Ringkasan Laba Penjualan (${marketplaceName})
+---------------------------------------
+Harga Jual    : ${formatRupiah(result.sellingPrice)}
+Modal (HPP)   : ${formatRupiah(result.productCost)}
+Potongan Fee  : ${formatRupiah(result.totalMarketplaceFees + result.paymentFee)}
+Iklan & Promo : ${formatRupiah(result.operationalCosts.total + result.affiliateFee)}
+---------------------------------------
+${isProfitable ? '✅' : '⚠️'} Laba Bersih : ${formatRupiah(result.netProfit)} (${formatPercentage(result.netMargin)} margin)
+🎯 Harga BEP  : ${formatRupiah(result.breakEvenPrice)} (Titik Impas)
+---------------------------------------
+Dihitung via MarketplaceIntel.id`;
+
+    navigator.clipboard.writeText(summaryText).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    });
+  };
 
   return (
     <div
@@ -37,37 +60,58 @@ export function ProfitSignatureCard({
           : 'border-rose-200/80 bg-gradient-to-b from-rose-50/50 to-white shadow-elevated'
       }`}
     >
-      {/* Top Tag */}
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-primary-500">
-          ESTIMASI KEUNTUNGAN BERSIH ({marketplaceName.toUpperCase()})
-        </span>
-        <div
-          className={`flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-            isProfitable
-              ? 'bg-emerald-100 text-emerald-800'
-              : isBreakEven
-              ? 'bg-amber-100 text-amber-800'
-              : 'bg-rose-100 text-rose-800'
-          }`}
+      {/* Top Tag & Actions */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-primary-500">
+            ESTIMASI KEUNTUNGAN BERSIH ({marketplaceName.toUpperCase()})
+          </span>
+          <div
+            className={`flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+              isProfitable
+                ? 'bg-emerald-100 text-emerald-800'
+                : isBreakEven
+                ? 'bg-amber-100 text-amber-800'
+                : 'bg-rose-100 text-rose-800'
+            }`}
+          >
+            {isProfitable ? (
+              <>
+                <TrendingUp className="h-3.5 w-3.5" />
+                <span>Untung</span>
+              </>
+            ) : isBreakEven ? (
+              <>
+                <Info className="h-3.5 w-3.5" />
+                <span>Impas (BEP)</span>
+              </>
+            ) : (
+              <>
+                <TrendingDown className="h-3.5 w-3.5" />
+                <span>Rugi</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* 1-Click Copy Summary Button */}
+        <button
+          type="button"
+          onClick={handleCopySummary}
+          className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-xs font-semibold text-primary-700 shadow-subtle transition-all hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-800 active:scale-95"
         >
-          {isProfitable ? (
+          {copied ? (
             <>
-              <TrendingUp className="h-3.5 w-3.5" />
-              <span>Untung</span>
-            </>
-          ) : isBreakEven ? (
-            <>
-              <Info className="h-3.5 w-3.5" />
-              <span>Impas (BEP)</span>
+              <Check className="h-3.5 w-3.5 text-emerald-600" />
+              <span className="text-emerald-700">Tersalin ke Clipboard!</span>
             </>
           ) : (
             <>
-              <TrendingDown className="h-3.5 w-3.5" />
-              <span>Rugi</span>
+              <Copy className="h-3.5 w-3.5 text-primary-500" />
+              <span>Salin Ringkasan</span>
             </>
           )}
-        </div>
+        </button>
       </div>
 
       {/* Big Typographic Profit Number */}
@@ -142,7 +186,13 @@ export function ProfitSignatureCard({
         </div>
       </div>
 
-      {/* 4-Platform Preview Pills */}
+      {/* 1. Visual Cost Anatomy Bar */}
+      <CostAnatomyBar result={result} />
+
+      {/* 2. Margin Health Barometer & Advisory */}
+      <MarginHealthBarometer margin={result.netMargin} />
+
+      {/* 3. 4-Platform Preview Pills */}
       {previewItems.length > 0 && (
         <div className="mt-6 border-t border-stone-200/80 pt-4">
           <div className="text-[11px] font-semibold text-primary-500">

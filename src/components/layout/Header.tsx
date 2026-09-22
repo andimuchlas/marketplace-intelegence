@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Calculator, ArrowLeftRight, FileText, Sparkles } from 'lucide-react';
+import { Calculator, ArrowLeftRight, FileText } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { siteConfig } from '@/config/site';
 
 export function Header() {
@@ -61,7 +62,7 @@ export function Header() {
             href="/marketplace-calculator"
             className="inline-flex items-center gap-1.5 rounded-lg bg-primary-900 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-primary-800 active:scale-95 sm:text-sm"
           >
-            <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+            <GoogleIcon name="calculate" size={16} className="text-emerald-400" />
             <span>Mulai Hitung</span>
           </Link>
         </div>

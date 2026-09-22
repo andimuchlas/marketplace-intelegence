@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { SlidersHorizontal, ArrowRight, RotateCcw, Check, Sparkles, Target } from 'lucide-react';
+import { SlidersHorizontal, ArrowRight, RotateCcw, Check, Target } from 'lucide-react';
 import { MarketplaceId, CalculatorInput } from '@/domain/calculator/types';
 import {
   MARKETPLACE_CONFIGS,

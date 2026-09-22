@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Sparkles, ArrowRight, ShieldCheck, CheckCircle2, HelpCircle } from 'lucide-react';
+import { ArrowRight, ShieldCheck, CheckCircle2, HelpCircle } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { constructMetadata } from '@/lib/seo/metadata';
 import { MarketplaceCalculator } from '@/components/calculator/MarketplaceCalculator';
 import { ComparisonMatrix } from '@/components/comparison/ComparisonMatrix';
@@ -55,7 +56,7 @@ export default function HomePage() {
         {/* Hero Section (Wise Style) */}
         <section className="mb-10 text-center sm:mb-12">
           <div className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-3.5 py-1 text-xs font-semibold text-primary-700 shadow-subtle">
-            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+            <GoogleIcon name="monitoring" size={16} className="text-emerald-600" />
             <span>Kalkulator Finansial UMKM E-commerce 2025</span>
           </div>
 

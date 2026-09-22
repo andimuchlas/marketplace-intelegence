@@ -1,6 +1,7 @@
 'use client';
 
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { TRENDING_PRODUCTS, TrendingProductItem } from '@/data/radar/trendingProducts';
 import { formatRupiah } from '@/lib/formatting/currency';
 
@@ -14,7 +15,7 @@ export function CuratedTrendingGrid({ onSelectProduct }: CuratedTrendingGridProp
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary-500">
-            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+            <GoogleIcon name="local_fire_department" size={16} className="text-amber-500" />
             Produk Terpopuler Minggu Ini
           </div>
           <p className="mt-0.5 text-xs text-primary-500">

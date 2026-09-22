@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { Search, Loader2, Sparkles } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 
 interface RadarSearchBarProps {
   initialQuery?: string;
@@ -71,8 +72,8 @@ export function RadarSearchBar({
       {/* Quick Discovery Chips */}
       <div className="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
         <span className="flex items-center gap-1 font-semibold text-primary-500">
-          <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-          Pencarian Cepat:
+          <GoogleIcon name="trending_up" size={16} className="text-emerald-600" />
+          Pencarian Populer:
         </span>
         {QUICK_SEARCH_CHIPS.map((chip) => (
           <button

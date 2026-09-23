@@ -61,9 +61,7 @@ export function RadarSearchBar({
                 <span className="hidden sm:inline">Membandingkan...</span>
               </>
             ) : (
-              <>
-                <span>Radar Harga</span>
-              </>
+              <span>Search</span>
             )}
           </button>
         </div>

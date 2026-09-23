@@ -9,12 +9,14 @@ export const siteConfig = {
   disclaimer:
     'Situs ini merupakan alat utilitas independen untuk edukasi UMKM dan bukan bagian resmi dari Shopee, Tokopedia, TikTok, atau Lazada. Seluruh merek dagang dan hak cipta merupakan milik masing-masing perusahaan.',
   navItems: [
-    { label: 'Kalkulator', href: '/marketplace-calculator' },
-    { label: 'Bandingkan', href: '/compare' },
-    { label: 'Biaya Shopee', href: '/shopee-fee' },
-    { label: 'Biaya Tokopedia', href: '/tokopedia-fee' },
-    { label: 'Biaya TikTok', href: '/tiktok-shop-fee' },
-    { label: 'Biaya Lazada', href: '/lazada-fee' },
+    { label: 'Radar Harga', href: '/' },
+    { label: 'Portal Penjual', href: '/seller' },
+    { label: 'Kalkulator', href: '/seller/kalkulator' },
+    { label: 'Bandingkan', href: '/seller/komparasi-fee' },
+    { label: 'Biaya Shopee', href: '/seller/biaya-admin/shopee' },
+    { label: 'Biaya Tokopedia', href: '/seller/biaya-admin/tokopedia' },
+    { label: 'Biaya TikTok', href: '/seller/biaya-admin/tiktok-shop' },
+    { label: 'Biaya Lazada', href: '/seller/biaya-admin/lazada' },
   ],
   marketplaces: [
     { id: 'shopee', name: 'Shopee', color: '#EE4D2D', icon: 'shopping_bag' },

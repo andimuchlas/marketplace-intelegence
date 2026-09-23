@@ -42,6 +42,7 @@ Small and medium-sized sellers (UMKM) and brand aggregators struggle to calculat
 | **UMKM / Solo Seller** | Individual or home-based merchant selling fashion, FMCG, or accessories on Shopee & TikTok Shop. | Surprise deductions at month-end; does not know exact fee percentages (e.g. Gratis Ongkir Xtra + Admin). | Instant break-even calculator that tells them exact minimum selling price before running promotions. |
 | **Power Merchant / Star Seller** | Scaling business selling 500+ orders/month across multiple channels (Tokopedia PM Pro, Shopee Star+). | Difficult to decide which platform yields the best net margin for an identical product. | Side-by-side comparison matrix showing total deduction delta across Shopee, Tokopedia, TikTok Shop, and Lazada. |
 | **Brand Manager / Agency Media Buyer** | Operates paid campaigns (Shopee Ads, TikTok GMV Max, CPAS) and affiliate programs. | Ads and affiliate costs swallow the gross profit if not factored into base pricing. | Comprehensive input fields for ROAS/Ad budget per unit, affiliate commissions, and voucher costs. |
+| **Smart Online Shopper (B2C Consumer)** | Active digital consumer looking to purchase gadgets, cosmetics, fashion, or electronics at the best price. | Inconvenience of opening 4 apps simultaneously; uncertainty if campaign discounts (11.11, Payday) are authentic. | Real-time Price Radar comparing all 4 platforms instantly with direct outbound links to the cheapest merchant. |
 
 ---
 
@@ -93,8 +94,8 @@ Phase 3: Premium Marketplace Intelligence (Future)
 - **Kill-Switch Control:** Configurable via global environment flag (`NEXT_PUBLIC_ADS_ENABLED=false`).
 
 ### 5.2 Affiliate Integration Strategy
-- Neutral outbound links to seller services (e.g., shipping aggregator platforms, accounting software, seller university courses).
-- Declarative provider routing ensuring no platform bias.
+- **B2B Merchant Affiliates:** Neutral outbound links to seller services (e.g., shipping aggregator platforms, accounting software, seller university courses).
+- **B2C Consumer Product Affiliates:** Outbound tracking endpoint (`/api/radar/click`) routing shoppers to official product listings on Shopee Affiliate, TikTok Shop Creator Affiliate, Involve Asia (Lazada), and Tokopedia with standard `sponsored` tracking tags.
 
 ---
 
@@ -105,20 +106,22 @@ Phase 3: Premium Marketplace Intelligence (Future)
 | **Marketplace Fee Rule Changes** | Inaccurate calculations erode seller trust. | Decouple fee rules into declarative data files; display "Last Verified Date", "Version", and official policy documentation source links on every fee page. |
 | **Legal/Brand Misinterpretation** | Marketplaces claiming unauthorized representation. | Clear disclaimers: *"Situs ini bukan bagian resmi dari Shopee, Tokopedia, TikTok, atau Lazada. Seluruh merek dagang adalah hak milik masing-masing perusahaan."* |
 | **SEO Volatility / Google Core Updates** | Loss of organic traffic to content farms. | Build high-utility interactive tools that beat static content farms on engagement metrics; avoid thin automated doorway pages. |
-| **Ad Blocker Impact** | Reduced monetization yield. | Diversify beyond display ads into direct B2B directory placements, affiliate recommendations, and premium offline tools. |
+| **Ad Blocker Impact** | Reduced monetization yield. | Diversify beyond display ads into direct B2B directory placements, e-commerce outbound affiliate commissions, and premium offline tools. |
 
 ---
 
 ## 7. Scope Boundaries
 
-### In Scope for Initial Release
+### In Scope
+- **Dual-Portal System:** Dedicated Consumer Portal at `/` (Price Radar) and Merchant Portal at `/seller/*` (Calculators & Fee Guides).
 - Deterministic calculation engine for single marketplace profit, margin, and break-even.
 - 4-way cross-marketplace side-by-side comparison engine.
-- 13 SEO-optimized static/SSR landing pages (Home, Universal Calculator, Marketplace-specific calculators, Marketplace fee guides, Cross-comparison pages).
+- B2C Price Radar on-demand search engine with Redis 7 caching, sliding-window rate limiting (20 req/min), and Neon Postgres analytics.
+- Outbound monetized affiliate click router (`/api/radar/click`).
+- 36 SEO-optimized static/SSR landing pages with 301 backward-compatible redirects.
 - Full Indonesian Rupiah (IDR) currency formatting with non-floating point rounding precision.
 - Accessibility standards (WCAG AA keyboard navigation, contrast, screen reader labels).
 - AdSlot architecture with position configuration and global feature switch.
-- Affiliate provider abstraction.
 - XML Sitemap, `robots.txt`, Open Graph, and JSON-LD structured data.
 
 ### Out of Scope (Deferred to Future Phases)

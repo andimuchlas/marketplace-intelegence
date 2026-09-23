@@ -1,8 +1,8 @@
 # System Architecture & Technical Design Document
 ## Project: Indonesian Marketplace Intelligence & Profit Calculator Platform
 
-- **Document Version:** 1.0.0
-- **Status:** Approved
+- **Document Version:** 2.0.0
+- **Status:** Approved for Dual-Portal & Price Radar Production
 - **Lead Architect:** Lead Software Architect & Senior Full-Stack Engineer
 
 ---
@@ -11,16 +11,16 @@
 
 The architectural design of **Marketplace Intelligence Indonesia** is guided by five foundational principles:
 
-1. **Separation of Domain Logic from UI:**
-   Calculation logic is 100% pure TypeScript, decoupled from React components, hooks, or DOM APIs. The calculation engine operates independently of rendering targets.
-2. **Config-Driven Domain Rules:**
-   Marketplace fee rules, category rates, and seller tiers are declarative data structures. Adding a new marketplace or updating a fee commission does not require modifying calculation algorithms.
-3. **SEO as a First-Class Architectural Citizen:**
-   All 13 primary landing pages are statically pre-rendered or server-rendered (SSG/SSR). Search bots receive semantically rich, accessible HTML containing complete educational text and default calculation examples without running JavaScript.
-4. **Zero-Latency Client-Side Interactivity:**
-   While SEO content is pre-rendered on the server, the calculation engine runs entirely client-side in the browser upon user input. Zero server requests or API roundtrips are incurred during typing or sliding.
-5. **Modular Monolith over Distributed Complexity:**
-   No microservices, no message queues, no Redis, no distributed tracing, and no redundant database layers. The application is a unified Next.js + TypeScript codebase designed for zero-maintenance edge deployment with clean internal boundaries.
+1. **Dual-Portal Persona Separation:**
+   Consumer shopping discovery (`/`) and merchant unit-economics (`/seller/*`) are strictly decoupled. Shoppers experience a zero-clutter price radar with no merchant accounting jargon, while sellers receive comprehensive financial tools and fee documentation.
+2. **Separation of Domain Logic from UI:**
+   Calculation and radar aggregation logic are 100% pure TypeScript, decoupled from React components, hooks, or DOM APIs. Both the B2B calculation engine and B2C normalizer operate independently of rendering targets.
+3. **Resilient Layered Infrastructure (Fail-Safe Architecture):**
+   External network resources (Redis 7 Docker, Neon Serverless Postgres, and third-party marketplace gateways) are guarded by automatic, in-memory and mock fallbacks. The platform operates 100% independently in local development, CI testing, and Edge runtimes without hard external failures.
+4. **Sub-15ms Caching & Zero-Latency Calculations:**
+   Price radar searches utilize a 1-hour Redis cache TTL (`radar:query:<slug>`) yielding sub-15ms response times on hits. When uncached, concurrent gateway fetch executes via `Promise.allSettled`. B2B profit calculations run 100% client-side with zero server roundtrips.
+5. **SEO & Backward Compatibility as First-Class Citizens:**
+   All 36 canonical routes are server-rendered (SSR/SSG) for search bots with rich JSON-LD schemas. Legacy URLs are permanently preserved via HTTP 301 redirects (`next.config.mjs`), ensuring zero loss of domain ranking or backlinks.
 
 ---
 
@@ -28,67 +28,89 @@ The architectural design of **Marketplace Intelligence Indonesia** is guided by 
 
 ```mermaid
 flowchart TD
-    subgraph Client["Client Browser / Search Engine Crawler"]
-        SearchCrawler["Search Engine Crawler (Googlebot)"]
-        UserBrowser["User Browser (Desktop / Mobile)"]
+    subgraph Clients["Clients & Crawlers"]
+        Crawler["Search Engine Crawler (Googlebot)"]
+        Shopper["Online Shopper (B2C at /)"]
+        Seller["Merchant / Seller (B2B at /seller/*)"]
     end
 
-    subgraph EdgeDelivery["Edge CDN & Next.js Server (App Router)"]
-        Router["Next.js App Router (SSR / SSG)"]
-        SEOEngine["SEO & Metadata Generator (JSON-LD, Canonical, OG)"]
-        HTMLRenderer["HTML + CSS (Pre-rendered content & hydration shell)"]
+    subgraph EdgeAppRouter["Edge & Server Runtime (Next.js 14 + Bun)"]
+        Router["Next.js App Router (SSR / SSG / Route Handlers)"]
+        SEOEngine["SEO & Schema Generator (JSON-LD, Canonical, OG)"]
+        RedirectEngine["301 Redirect Engine (next.config.mjs)"]
     end
 
-    subgraph ClientRuntime["Client-Side Interactive Runtime (React)"]
+    subgraph B2CConsumerSubsystem["B2C Consumer Price Radar Subsystem"]
+        RadarUI["Radar Search Bar & Comparison Matrix UI"]
+        RadarAPISearch["/api/radar/search Handler"]
+        RadarAPIClick["/api/radar/click Handler"]
+        RateLimiter["Rate Limiter (20 req/min search, 60 req/min click)"]
+        RadarCache["Radar Cache Service (1h TTL / Redis 7)"]
+        RadarAggregator["Radar Aggregator (Promise.allSettled)"]
+        Normalizer["Price Normalizer & Winner Resolver (ΔP)"]
+        
+        subgraph GatewayAdapters["Marketplace Gateway Adapters"]
+            ShopeeAdapter["Shopee Adapter"]
+            TokopediaAdapter["Tokopedia Adapter"]
+            TikTokAdapter["TikTok Shop Adapter"]
+            LazadaAdapter["Lazada Adapter"]
+        end
+    end
+
+    subgraph B2BMerchantSubsystem["B2B Merchant Calculation Subsystem"]
         CalcUI["Calculator Form UI Components"]
         CompUI["Comparison Matrix UI Components"]
-        AdSlots["AdSlot Placements (Config Switch)"]
-        AffLinks["Affiliate Link Router (Config-based)"]
-        AnalyticsDispatcher["Abstract Analytics Dispatcher"]
-    end
-
-    subgraph DomainCore["Domain Core (Pure TypeScript Engine)"]
-        Engine["Calculation Engine (calculateProfit)"]
+        DomainEngine["Calculation Engine (calculateProfit)"]
         CompEngine["Comparison Engine (compareMarketplaces)"]
-        BreakEvenCalc["Break-Even Solver (calculateBreakEven)"]
-        CurrencyFormatter["IDR Monetary & Precision Formatter"]
+        BreakEvenSolver["Break-Even Solver (calculateBreakEven)"]
+        ConfigRegistry["Declarative Marketplace Fee Registry"]
     end
 
-    subgraph ConfigData["Config & Data Repository"]
-        ShopeeConfig["Shopee Fee Rules (Mock Prototype)"]
-        TokoConfig["Tokopedia Fee Rules (Mock Prototype)"]
-        TikTokConfig["TikTok Shop Fee Rules (Mock Prototype)"]
-        LazadaConfig["Lazada Fee Rules (Mock Prototype)"]
-        MarketplaceRegistry["Marketplace Config Registry"]
+    subgraph PersistenceInfrastructure["Persistence & Cache Infrastructure"]
+        RedisDocker["Redis 7 Alpine (Docker / ioredis)"]
+        MemoryCacheFallback["In-Memory Map & Bucket Fallback"]
+        NeonPostgres["Neon Serverless PostgreSQL (Drizzle ORM)"]
+        DBTables["trending_searches | price_snapshots | affiliate_clicks"]
     end
 
-    SearchCrawler -->|GET HTML| Router
+    %% Routing
+    Shopper -->|GET /| Router
+    Seller -->|GET /seller/*| Router
+    Crawler -->|GET HTML| Router
+    Router --> RedirectEngine
     Router --> SEOEngine
-    Router --> HTMLRenderer
-    HTMLRenderer -->|Pre-rendered HTML with Rich Schema| SearchCrawler
 
-    UserBrowser -->|Page Request| Router
-    Router --> HTMLRenderer
-    HTMLRenderer -->|Hydration Shell| UserBrowser
-    UserBrowser --> ClientRuntime
+    %% B2C Radar Flow
+    Shopper --> RadarUI
+    RadarUI -->|Query: search, trending tag| RadarAPISearch
+    RadarAPISearch --> RateLimiter
+    RateLimiter -->|Check limit| RedisDocker
+    RateLimiter -.->|Fallback on error| MemoryCacheFallback
+    RadarAPISearch --> RadarCache
+    RadarCache -->|Get/Set 3600s| RedisDocker
+    RadarCache -.->|Fallback on error| MemoryCacheFallback
+    RadarCache -->|Cache Miss| RadarAggregator
+    RadarAggregator --> GatewayAdapters
+    GatewayAdapters --> Normalizer
+    Normalizer -->|Return PriceRadarResult| RadarUI
+    RadarAPISearch -.->|Async Telemetry Log| NeonPostgres
+    NeonPostgres --> DBTables
 
-    CalcUI -->|User Inputs (Price, HPP, Ads, Tier)| Engine
-    CompUI -->|User Inputs| CompEngine
-    CompEngine -->|Runs N Marketplaces| Engine
+    %% B2C Outbound Click Flow
+    RadarUI -->|Click Deal| RadarAPIClick
+    RadarAPIClick --> RateLimiter
+    RadarAPIClick -.->|Async Click Log| NeonPostgres
+    RadarAPIClick -->|307 Redirect| OutboundMarketplace["Verified Marketplace Product (Affiliate URL)"]
 
-    Engine -->|Queries Rules| MarketplaceRegistry
-    MarketplaceRegistry --> ShopeeConfig
-    MarketplaceRegistry --> TokoConfig
-    MarketplaceRegistry --> TikTokConfig
-    MarketplaceRegistry --> LazadaConfig
-
-    Engine --> BreakEvenCalc
-    Engine --> CurrencyFormatter
-    Engine -->|Returns CalculationResult| CalcUI
-    CompEngine -->|Returns ComparisonResult| CompUI
-
-    CalcUI -.->|Dispatches Events| AnalyticsDispatcher
-    CompUI -.->|Dispatches Events| AnalyticsDispatcher
+    %% B2B Calculator Flow
+    Seller --> CalcUI
+    Seller --> CompUI
+    CalcUI -->|Pure TS Execution| DomainEngine
+    CompUI -->|Runs N Platforms| CompEngine
+    CompEngine --> DomainEngine
+    DomainEngine --> ConfigRegistry
+    DomainEngine --> BreakEvenSolver
+    DomainEngine -->|Instant sub-5ms result| CalcUI
 ```
 
 ---
@@ -97,44 +119,61 @@ flowchart TD
 
 | Layer | Selection | Architectural Justification |
 | :--- | :--- | :--- |
-| **Framework** | **Next.js 14+ (App Router)** | Best-in-class SSG/SSR support for SEO, built-in metadata API, native sitemap generation, zero-config code splitting, and high performance on Edge/Node runtimes. |
-| **Language** | **TypeScript 5.x (Strict Mode)** | Complete type safety across domain interfaces, configuration objects, calculation inputs, and UI components. Eliminates null/undefined runtime crashes. |
-| **Styling & Design Tokens** | **Tailwind CSS 3.x** | Utility-first, zero-runtime CSS overhead, highly responsive mobile-first layouts, and custom tokens for the modern fintech palette (`#FAFAF9` canvas, Slate-900 text, Emerald profit, Rose loss). |
+| **Runtime & Package Manager** | **Bun v1.3.14+** | High-performance JavaScript/TypeScript runtime with instantaneous package installations, sub-millisecond script startup, and blazing-fast test execution. |
+| **Framework** | **Next.js 14+ (App Router)** | Best-in-class SSG/SSR support for SEO, built-in metadata API, route handlers, native sitemap generation, zero-config code splitting, and high performance on Edge/Node runtimes. |
+| **Language** | **TypeScript 5.x (Strict Mode)** | Complete type safety across domain interfaces, configuration objects, radar adapters, and UI components. Eliminates null/undefined runtime crashes. |
+| **Styling & Tokens** | **Tailwind CSS 3.x** | Utility-first, zero-runtime CSS overhead, highly responsive mobile-first layouts, and custom tokens for the modern fintech palette (`#FAFAF9` canvas, Slate-900 text, Emerald profit, Rose loss). |
+| **Icons & Brand Identity** | **Google Material Symbols & SVG Logos** | 100% Zero-Emoji standard. Unified brand SVG components (`MarketplaceIcon.tsx`) and accessible, lightweight Material Symbols replacing raw emojis across all portals. |
 | **UI Primitives** | **shadcn/ui (Radix UI Core)** | Unstyled, accessible (WAI-ARIA compliant) headless primitives for Select, Tabs, Tooltip, Accordion, and Dialog without heavy bundle locks. |
 | **Animation Engine** | **Framer Motion (`framer-motion`)** | Declarative springs for numerical profit tickers, smooth accordion drawer expansion, and layout-preserving marketplace selector tabs with zero CLS impact. (See [ADR-008](file:///home/andim/ideas/marketplace-intelegence/docs/decisions/ADR-008-client-animation-strategy-motion-and-cls-safety.md)). |
-| **Typography (Font Trio)** | **Display + Body + Tabular Mono** | 1. Display/Heading: *Plus Jakarta Sans* / *Geist Sans* (sharp financial authority).<br>2. Body: *Inter* / *Plus Jakarta Sans*.<br>3. Tabular Numeric: *Geist Mono* / *JetBrains Mono* with `tabular-nums` for exact decimal/column alignment. (See [ADR-007](file:///home/andim/ideas/marketplace-intelegence/docs/decisions/ADR-007-design-system-fintech-utility-and-typography-trio.md)). |
+| **Typography (Font Trio)** | **Display + Body + Tabular Mono** | 1. Display/Heading: *Plus Jakarta Sans* / *Geist Sans*.<br>2. Body: *Inter* / *Plus Jakarta Sans*.<br>3. Tabular Numeric: *Geist Mono* / *JetBrains Mono* with `tabular-nums` for exact column alignment. (See [ADR-007](file:///home/andim/ideas/marketplace-intelegence/docs/decisions/ADR-007-design-system-fintech-utility-and-typography-trio.md)). |
+| **Caching Layer** | **Redis 7 Alpine (Docker / `ioredis`)** | Atomic string key storage with 3600s TTL for aggregated search queries. Resilient automated in-memory LRU fallback when Redis is offline. (See [ADR-010](file:///home/andim/ideas/marketplace-intelegence/docs/decisions/ADR-010-b2c-price-radar-engine-caching-and-rate-limiting.md)). |
+| **Security & Rate Limiting** | **Sliding Window Rate Limiter** | Redis atomic `INCR` + `EXPIRE` window (20 req/min for search, 60 req/min for clicks) returning RFC 6585 standard headers (`X-RateLimit-*`) and HTTP 429 status on abuse. |
+| **Database & ORM** | **Neon Postgres & Drizzle ORM** | Serverless PostgreSQL connected via Drizzle ORM for logging trending search analytics, historical price snapshots, and affiliate click tracking. |
 | **Validation** | **Zod** | Declarative schema validation for user input parsing and runtime configuration sanity checks. |
-| **Testing** | **Vitest** | Sub-millisecond execution for unit test suites covering the pure domain calculation engine, break-even solver, and currency formatters. |
-| **Database** | **None for Prototype (Static Config Registry)** | For the initial release, a database introduces operational friction without value. Declarative TypeScript data modules provide version-controlled, fast, zero-latency rule storage. A clean migration interface is established for PostgreSQL when a database is needed in future phases. |
+| **Testing** | **Vitest** | Sub-millisecond execution for unit test suites covering the pure domain calculation engine, break-even solver, radar normalizer, and rate limiter. |
 
 ---
 
 ## 4. Visual Design Architecture: The "Modern Financial Utility"
 
-The product strictly avoids the **"Seller Admin Dashboard"** anti-pattern (crammed sidebars, dark crypto themes, 40 random cards). It is a public utility website where users arrive from organic search, perform immediate calculations, view prominent outcomes, compare platforms, and consume educational breakdowns.
+The product strictly avoids the **"Seller Admin Dashboard"** anti-pattern (crammed sidebars, dark crypto themes, 40 random cards). It deploys a dual-portal utility design where consumers easily compare live marketplace prices, and sellers calculate unit-economics without interference.
 
 ### 4.1 Four Architectural Reference Pillars
 1. **Wise (Structure & Intent Flow):**
-   - Clean top navigation.
-   - Big, search-intent headline ("Hitung Keuntungan Bersih Jualan di Shopee").
-   - Tool/Calculator Card immediately visible above the fold.
-   - Prominent Result summary card.
-   - Rich, authoritative explanatory SEO content, formulas, and FAQs below.
+   - Clean top navigation with active persona indicator.
+   - High-intent hero section and focused input container.
+   - Prominent result signature card with clear savings / profit metrics.
+   - Authoritative explanatory SEO content and FAQs below.
 2. **SlickCalc (Calculator Ergonomics & Minimalism):**
-   - Whitespace-driven, distraction-free calculation experience.
+   - Whitespace-driven, distraction-free experience.
    - Large input touchpoints with clear Indonesian Rupiah prefixes.
    - Zero gratuitous charts or decorative noise.
 3. **Marketplace Analytics (Data Hierarchy & Comparison):**
    - Side-by-side comparative metric cards across Shopee, Tokopedia, TikTok Shop, and Lazada.
-   - Clear visual flags for the "Best Margin" platform without sensory overload.
+   - Clear visual flags for `"Paling Murah"` (B2C) and `"Margin Terbaik"` (B2B).
 4. **Modern Fintech UI (Typography, Spacing & Trust):**
    - Off-white canvas (`#FAFAF9`), pure white card surfaces (`#FFFFFF`), very light gray borders (`#E2E8F0`).
-   - Marketplace branding is represented via subtle badge accents (`[ 🟠 Shopee ]`, `[ 🟢 Tokopedia ]`, `[ ⚫ TikTok Shop ]`, `[ 🔵 Lazada ]`), never whole-page color washes.
+   - Subtle marketplace branding badges (`MarketplaceIcon.tsx`), never full-page color washes.
 
-### 4.2 Desktop 3-Column Layout & Safe Ad Zones
+### 4.2 Dual-Portal Layout Topologies
+
+#### A. Consumer Price Radar Portal (`/`)
+- **Header:** Persona toggle tabs (`Pembeli` [Underlined Active] | `Penjual`).
+- **Hero & Search Bar:** High-intent search input with explicit action button labeled `Search` and trending query chips.
+- **4-Way Comparison Matrix:** Side-by-side product deal cards across Shopee, Tokopedia, TikTok Shop, and Lazada.
+- **Value Highlight:** Platform offering the absolute lowest price receives a distinct `"Paling Murah"` badge with price delta savings callout ($\Delta P$).
+- **Zero Merchant Jargon:** HPP, profit margins, and operational costs are completely hidden from the consumer experience.
+
+#### B. Merchant Hub & Calculators (`/seller/*`)
+- **Header:** Persona toggle tabs (`Pembeli` | `Penjual` [Underlined Active]) + Sub-navigation (`Kalkulator`, `Bandingkan`, `Biaya Admin`).
+- **Calculator Card:** Selling price, HPP, ad budget, affiliate, and tier inputs.
+- **Profit Signature Card:** Ticker display with net profit (IDR), net margin (%), and break-even selling price.
+- **Desktop 3-Column Safe Ad Layout:**
 ```text
 ┌───────────────────────────────────────────────────────────────┐
-│ [Logo] Marketplace Intelligence     Kalkulator  Bandingkan  Biaya  │
+│ [Logo] Marketplace Intelligence     Pembeli  <u>Penjual</u>    │
+│ Sub-nav: Kalkulator | Komparasi Fee | Biaya Admin             │
 ├───────────────────────────────────────────────────────────────┤
 │                                                               │
 │                         HERO SECTION                          │
@@ -148,7 +187,6 @@ The product strictly avoids the **"Seller Admin Dashboard"** anti-pattern (cramm
 │     └──────────────────────────────────────────────────┘      │
 │                                                               │
 ├───────────────┬───────────────────────────────┬───────────────┤
-│               │                               │               │
 │   AD SLOT     │      YOUR PROFIT SIGNATURE    │    AD SLOT    │
 │ (sidebar-left)│           Rp 17.600           │(sidebar-right)│
 │               │            +17.6%             │               │
@@ -156,20 +194,17 @@ The product strictly avoids the **"Seller Admin Dashboard"** anti-pattern (cramm
 │               │  │ Quick 4-Platform Preview│  │               │
 │               │  └─────────────────────────┘  │               │
 │               │      Itemized Fee Drawer      │               │
-│               │                               │               │
 ├───────────────┴───────────────────────────────┴───────────────┤
-│                                                               │
 │             4-WAY CROSS-MARKETPLACE COMPARISON MATRIX         │
-│                                                               │
 ├───────────────────────────────────────────────────────────────┤
-│                                                               │
 │        EDITORIAL EXPLANATORY CONTENT & SEO FORMULAS           │
-│        (Step-by-step example, FAQ Schema, Internal Links)     │
-│                                                               │
 └───────────────────────────────────────────────────────────────┘
 ```
-- **Ad Safety Principle:** The interactive calculator card is **never** flanked or squeezed by ads.
-- Left and right ad sidebars only appear alongside results on desktop screens (>= 1280px), preserving focus and eliminating accidental clicks.
+
+### 4.3 100% Zero-Emoji UI Standard
+To maintain institutional fintech trust, raw Unicode emojis are strictly forbidden across the codebase. All visual signifiers utilize:
+- **Marketplace Logos:** Unified SVG brand icons in `src/components/ui/MarketplaceIcon.tsx`.
+- **Interface Glyphs:** Google Material Symbols (`search`, `trending_up`, `verified`, `store`, `star`, `arrow_forward`, `open_in_new`).
 
 ---
 
@@ -177,104 +212,115 @@ The product strictly avoids the **"Seller Admin Dashboard"** anti-pattern (cramm
 
 ```
 marketplace-intelegence/
+├── docker-compose.yml                    # Redis 7 Alpine Container Configuration
 ├── docs/                                 # Architectural & Product Documentation
-│   ├── BRD.md                            # Business Requirements Document
-│   ├── PRD.md                            # Product Requirements Document
+│   ├── BRD.md                            # Business Requirements Document (Dual-Persona)
+│   ├── PRD.md                            # Product Requirements Document (36 Canonical Routes)
 │   ├── ARCHITECTURE.md                   # System Architecture (This file)
-│   └── decisions/                        # Architecture Decision Records (ADRs)
-│       ├── ADR-001-modular-monolith-nextjs-tech-stack.md
-│       ├── ADR-002-domain-driven-calculation-engine.md
-│       ├── ADR-003-declarative-marketplace-fee-rule-schema.md
-│       ├── ADR-004-monetary-precision-and-idr-currency-handling.md
-│       ├── ADR-005-seo-first-content-and-rendering-architecture.md
-│       ├── ADR-006-monetization-extensibility-ads-and-affiliate.md
-│       ├── ADR-007-design-system-fintech-utility-and-typography-trio.md
-│       └── ADR-008-client-animation-strategy-motion-and-cls-safety.md
+│   ├── decisions/                        # Architecture Decision Records (ADRs)
+│   │   ├── ADR-001-modular-monolith-nextjs-tech-stack.md
+│   │   ├── ADR-002-domain-driven-calculation-engine.md
+│   │   ├── ADR-003-declarative-marketplace-fee-rule-schema.md
+│   │   ├── ADR-004-monetary-precision-and-idr-currency-handling.md
+│   │   ├── ADR-005-seo-first-content-and-rendering-architecture.md
+│   │   ├── ADR-006-monetization-extensibility-ads-and-affiliate.md
+│   │   ├── ADR-007-design-system-fintech-utility-and-typography-trio.md
+│   │   ├── ADR-008-client-animation-strategy-motion-and-cls-safety.md
+│   │   ├── ADR-009-dual-portal-architecture-and-persona-separation.md
+│   │   └── ADR-010-b2c-price-radar-engine-caching-and-rate-limiting.md
+│   └── mockups/                          # Wireframe & Architecture Visual Assets
 ├── src/
-│   ├── app/                              # Next.js App Router (13 Canonical Routes + Assets)
-│   │   ├── layout.tsx                    # Root Layout (Nav, Footer, Global Providers)
-│   │   ├── page.tsx                      # Homepage (/)
-│   │   ├── marketplace-calculator/       # Universal Multi-Marketplace Calculator
-│   │   │   └── page.tsx
-│   │   ├── shopee-profit-calculator/     # Dedicated Shopee Calculator
-│   │   │   └── page.tsx
-│   │   ├── shopee-fee/                   # Shopee Fee Guide & Reference
-│   │   │   └── page.tsx
-│   │   ├── tokopedia-profit-calculator/  # Dedicated Tokopedia Calculator
-│   │   │   └── page.tsx
-│   │   ├── tokopedia-fee/                # Tokopedia Fee Guide & Reference
-│   │   │   └── page.tsx
-│   │   ├── tiktok-shop-profit-calculator/# Dedicated TikTok Shop Calculator
-│   │   │   └── page.tsx
-│   │   ├── tiktok-shop-fee/              # TikTok Shop Fee Guide & Reference
-│   │   │   └── page.tsx
-│   │   ├── lazada-profit-calculator/     # Dedicated Lazada Calculator
-│   │   │   └── page.tsx
-│   │   ├── lazada-fee/                   # Lazada Fee Guide & Reference
-│   │   │   └── page.tsx
-│   │   ├── compare/                      # Comparison Landing Hub
-│   │   │   ├── page.tsx                  # 4-Way Multi-Platform Comparison Tool
-│   │   │   ├── shopee-vs-tokopedia/      # Focused Head-to-Head Comparison
-│   │   │   │   └── page.tsx
-│   │   │   ├── shopee-vs-tiktok-shop/    # Focused Head-to-Head Comparison
-│   │   │   │   └── page.tsx
-│   │   │   └── tokopedia-vs-tiktok-shop/ # Focused Head-to-Head Comparison
-│   │   │       └── page.tsx
+│   ├── app/                              # Next.js App Router (36 Canonical Routes)
+│   │   ├── layout.tsx                    # Root Layout (Nav, Footer, Global Fonts)
+│   │   ├── page.tsx                      # [B2C] Consumer Price Radar Portal
+│   │   ├── seller/                       # [B2B] Seller Intelligence Portal
+│   │   │   ├── page.tsx                  # Seller Portal Hub & Main Calculator
+│   │   │   ├── kalkulator/               # Dedicated Marketplace Calculators
+│   │   │   │   ├── marketplace-calculator/page.tsx
+│   │   │   │   ├── shopee/page.tsx
+│   │   │   │   ├── tokopedia/page.tsx
+│   │   │   │   ├── tiktok-shop/page.tsx
+│   │   │   │   └── lazada/page.tsx
+│   │   │   ├── biaya-admin/              # Fee Schedules & Category Guides
+│   │   │   │   ├── shopee/page.tsx
+│   │   │   │   ├── tokopedia/page.tsx
+│   │   │   │   ├── tiktok-shop/page.tsx
+│   │   │   │   └── lazada/page.tsx
+│   │   │   └── komparasi-fee/            # Comparative Matrix & Head-to-Head
+│   │   │       ├── page.tsx
+│   │   │       ├── shopee-vs-tokopedia/page.tsx
+│   │   │       ├── shopee-vs-tiktok-shop/page.tsx
+│   │   │       └── tokopedia-vs-tiktok-shop/page.tsx
+│   │   ├── api/radar/                    # B2C Price Radar Route Handlers
+│   │   │   ├── search/route.ts           # Cached search aggregation endpoint
+│   │   │   ├── click/route.ts            # Affiliate outbound tracking & redirect
+│   │   │   └── trending/route.ts         # Trending query telemetry endpoint
 │   │   ├── sitemap.ts                    # Dynamic XML Sitemap Generator
 │   │   ├── robots.ts                     # Search Engine Robots Directive
 │   │   ├── not-found.tsx                 # Custom 404 Error Page
-│   │   └── error.tsx                     # Error Boundary
+│   │   └── error.tsx                     # Global Error Boundary
 │   ├── components/                       # UI Component Library
-│   │   ├── layout/                       # Header, Footer, Breadcrumbs, Container
+│   │   ├── layout/                       # Header (Active Underline), Footer, Breadcrumbs
+│   │   ├── radar/                        # RadarSearchBar, RadarResultsMatrix, RadarDealCard
 │   │   ├── calculator/                   # Calculator Form, Result Card, Fee Accordion
 │   │   ├── comparison/                   # Side-by-Side Comparison Matrix Table
-│   │   ├── ads/                          # AdSlot Placeholder Component
+│   │   ├── ads/                          # AdSlot Container Component
 │   │   ├── affiliate/                    # AffiliateLink Routing Component
 │   │   ├── seo/                          # Structured Data (JSON-LD), FAQ Accordion
-│   │   └── ui/                           # Base inputs, buttons, badges, tooltips
-│   ├── domain/                           # Pure Domain Calculation Layer
+│   │   └── ui/                           # MarketplaceIcon, Badges, Inputs, Tabs
+│   ├── domain/                           # Pure Domain Calculation & Aggregation Layer
 │   │   ├── calculator/                   # Calculation Engine, Break-Even, Types
 │   │   │   ├── engine.ts                 # Core calculateProfit function
 │   │   │   ├── comparison.ts             # compareMarketplaces aggregator
 │   │   │   ├── breakeven.ts              # Iterative break-even price solver
 │   │   │   └── types.ts                  # Domain TypeScript interfaces
+│   │   ├── radar/                        # B2C Price Radar Domain
+│   │   │   ├── types.ts                  # MarketplaceProductOffer, PriceRadarResult
+│   │   │   ├── normalizer.ts             # Price delta calculation & winner flag
+│   │   │   ├── radarAggregator.ts        # Concurrent multi-gateway aggregator
+│   │   │   ├── cache.ts                  # Redis 1h TTL service with memory fallback
+│   │   │   └── adapters/                 # Gateway Adapters (Shopee, Tokopedia, TikTok, Lazada)
 │   │   └── marketplace/                  # Marketplace Entity Definitions & Types
-│   │       └── types.ts
-│   ├── data/                             # Declarative Marketplace Fee Configurations
-│   │   └── marketplaces/
-│   │       ├── registry.ts               # Registry & Accessor API
-│   │       ├── shopee.ts                 # Shopee Tier/Category/Program Fee Config
-│   │       ├── tokopedia.ts              # Tokopedia Tier/Category/Program Fee Config
-│   │       ├── tiktok-shop.ts            # TikTok Shop Tier/Category/Program Fee Config
-│   │       └── lazada.ts                 # Lazada Tier/Category/Program Fee Config
+│   ├── data/marketplaces/                # Declarative Marketplace Fee Configurations
+│   │   ├── registry.ts                   # Registry & Accessor API
+│   │   ├── shopee.ts                     # Shopee Tier/Category/Program Fee Config
+│   │   ├── tokopedia.ts                  # Tokopedia Tier/Category/Program Fee Config
+│   │   ├── tiktok-shop.ts                # TikTok Shop Tier/Category/Program Fee Config
+│   │   └── lazada.ts                     # Lazada Tier/Category/Program Fee Config
+│   ├── db/                               # Database Persistence Layer
+│   │   ├── schema.ts                     # Drizzle ORM Schemas (trending, snapshots, clicks)
+│   │   └── index.ts                      # Neon Serverless Postgres Client Connection
 │   ├── lib/                              # Shared Utilities & Infrastructure
+│   │   ├── security/rateLimiter.ts       # Sliding Window Rate Limiter (Redis + In-Memory)
 │   │   ├── formatting/                   # Indonesian Rupiah & Percentage Formatters
 │   │   ├── seo/                          # Metadata Builders & Schema Generators
 │   │   ├── validation/                   # Zod Schemas for Inputs & Configs
 │   │   └── analytics/                    # Abstract Analytics Dispatcher
 │   └── config/                           # Application & Feature Flag Configuration
-│       ├── site.ts                       # Site Metadata & URLs
+│       ├── site.ts                       # Site Metadata & Route Configurations
 │       ├── ads.ts                        # Ad Slot Placement Definitions & Switches
 │       └── affiliate.ts                  # Affiliate Link Destination Providers
-├── tests/                                # Unit & Integration Test Suites
+├── tests/                                # Vitest Unit & Integration Test Suites
 │   ├── unit/
 │   │   ├── engine.test.ts                # Calculation engine behavioral tests
 │   │   ├── breakeven.test.ts             # Break-even solver tests
 │   │   ├── comparison.test.ts            # Multi-marketplace comparison tests
-│   │   └── formatting.test.ts            # Currency precision & parsing tests
+│   │   ├── formatting.test.ts            # Currency precision & parsing tests
+│   │   ├── radar.test.ts                 # Radar normalizer & aggregation tests
+│   │   └── rateLimiter.test.ts           # Sliding window rate limiter tests
 │   └── seo/
 │       └── metadata.test.ts              # Route metadata & schema completeness
-├── public/                               # Static Assets (Logos, Icons, Robots)
-├── package.json
-├── tsconfig.json
-└── tailwind.config.ts
+├── next.config.mjs                       # Next.js Config & 301 Permanent Redirects
+├── package.json                          # Bun Package Dependencies & Scripts
+├── tsconfig.json                         # Strict TypeScript Configuration
+└── tailwind.config.ts                    # Modern Fintech Tailwind Theme
 ```
 
 ---
 
-## 5. Domain Model & Calculation Engine Architecture
+## 6. Domain Model & Calculation Engine Architecture
 
-### 5.1 Data Contracts (Domain Interfaces)
+### 6.1 Data Contracts (Domain Interfaces)
 
 ```typescript
 // src/domain/calculator/types.ts
@@ -441,12 +487,12 @@ The calculation algorithm follows an immutable, functional pipeline:
 
 ---
 
-## 6. Currency & Number Precision Strategy
+## 7. Currency & Number Precision Strategy
 
-### 6.1 The Floating-Point Hazard
+### 7.1 The Floating-Point Hazard
 In JavaScript, floating-point arithmetic produces notorious precision errors (e.g. `100000 * 0.0425 = 4250.000000000001` or `0.1 + 0.2 = 0.30000000000000004`). In a financial calculator, displaying `Rp4.250,000000000001` destroys credibility.
 
-### 6.2 IDR Integer Arithmetic Strategy
+### 7.2 IDR Integer Arithmetic Strategy
 - **Indonesian Rupiah has no circulating decimal coins (Sen).** All actual transactions in Indonesian retail are rounded to whole Rupiah.
 - **Rule:**
   - Intermediate calculations use standard JavaScript numbers with explicit rounding via `Math.round()` at each distinct fee step.
@@ -457,39 +503,186 @@ In JavaScript, floating-point arithmetic produces notorious precision errors (e.
 
 ---
 
-## 7. SEO Architecture & Rendering Strategy
+## 8. B2C Consumer Price Radar Subsystem Architecture
 
-### 7.1 Search Intent to Route Mapping
+The B2C Price Radar provides real-time, multi-platform product discovery and deal intelligence at the root route (`/`).
 
-| Route | Primary Search Query Target | Intent Type | SSR Content Focus |
-| :--- | :--- | :--- | :--- |
-| `/` | `kalkulator marketplace indonesia` | Navigational / Broad Commercial | Overview of 4 platforms, quick comparison preview, platform links. |
-| `/marketplace-calculator` | `kalkulator jualan online marketplace` | Core Commercial Utility | Multi-platform switcher, full feature inputs, instant comparison. |
-| `/shopee-profit-calculator` | `kalkulator shopee star seller untung rugi` | Specific Tool Intent | Shopee seller tiers (Star/Mall), Gratis Ongkir Xtra toggle, Shopee formula. |
-| `/shopee-fee` | `biaya admin shopee terbaru 2025` | Informational / Educational | Comprehensive Shopee fee table, category rates, simulation example. |
-| `/tokopedia-profit-calculator`| `kalkulator profit tokopedia power merchant` | Specific Tool Intent | PM Pro / Regular tiers, Bebas Ongkir rate breakdown, Tokopedia formulas. |
-| `/tokopedia-fee` | `potongan biaya admin tokopedia` | Informational / Educational | Tokopedia commission groups 1-5, service fee limits. |
-| `/tiktok-shop-profit-calculator`| `kalkulator tiktok shop creator affiliate` | Specific Tool Intent | Live commerce fee, affiliate commission slider, Mall commission. |
-| `/tiktok-shop-fee` | `biaya admin tiktok shop seller` | Informational / Educational | TikTok Shop commission rates by category, payment fee terms. |
-| `/lazada-profit-calculator` | `kalkulator margin lazada lazmall` | Specific Tool Intent | LazMall vs Marketplace seller fees, Free Shipping Max costs. |
-| `/lazada-fee` | `biaya komisi lazada indonesia` | Informational / Educational | Detailed breakdown of Lazada commission and payment handling. |
-| `/compare` | `perbandingan potongan marketplace indonesia` | High-Intent Comparison | 4-way comparison matrix, cross-platform margin differences. |
-| `/compare/shopee-vs-tokopedia`| `shopee vs tokopedia lebih murah mana biaya admin` | Head-to-Head Comparison | Direct comparison of Shopee Star vs Tokopedia PM Pro fees. |
-| `/compare/shopee-vs-tiktok-shop`| `shopee vs tiktok shop biaya potongan seller` | Head-to-Head Comparison | Direct comparison highlighting affiliate costs and live shopping fees. |
-| `/compare/tokopedia-vs-tiktok-shop`| `tokopedia vs tiktok shop komisi jualan` | Head-to-Head Comparison | Shop \| Tokopedia integration context and fee structures. |
+### 8.1 Gateway Adapter Pattern
+To isolate platform-specific data quirks, the subsystem employs an Adapter Pattern implementing a uniform contract:
 
-### 7.2 Structured Data (Schema.org JSON-LD) Strategy
-Every page automatically injects contextual JSON-LD structured schemas:
-1. **WebApplication / SoftwareApplication:** On all calculator pages (`applicationCategory: BusinessApplication`, `operatingSystem: All`, `offers: { price: '0', priceCurrency: 'IDR' }`).
-2. **BreadcrumbList:** Hierarchical navigation trail assisting Google SERP snippet formatting.
-3. **FAQPage:** Structured FAQ answering specific questions (e.g., *"Berapa biaya admin Shopee Star Seller?"*).
-4. **HowTo:** Step-by-step calculation workflow structured for rich snippets.
+```typescript
+// src/domain/radar/types.ts
+export interface MarketplaceAdapter {
+  marketplaceId: MarketplaceId;
+  marketplaceName: string;
+  search(keyword: string): Promise<MarketplaceProductOffer[]>;
+}
+```
+
+The adapters reside in `src/domain/radar/adapters/`:
+- `shopeeAdapter.ts`: Resolves Shopee Star and Mall offers with volume sold indicators.
+- `tokopediaAdapter.ts`: Resolves Tokopedia Official Store and Power Merchant offers.
+- `tiktokShopAdapter.ts`: Resolves TikTok Shop verified creator and merchant offers.
+- `lazadaAdapter.ts`: Resolves LazMall and Top Seller product listings.
+
+### 8.2 Concurrent Aggregation Pipeline (`radarAggregator.ts`)
+Queries are executed across all 4 marketplace adapters concurrently using `Promise.allSettled`:
+```typescript
+export async function searchAllMarketplaces(query: string): Promise<MarketplaceProductOffer[]> {
+  const promises = adapters.map(adapter =>
+    adapter.search(query).catch(err => {
+      console.error(`Adapter failed for ${adapter.marketplaceId}:`, err);
+      return [];
+    })
+  );
+  const results = await Promise.all(promises);
+  return results.flat();
+}
+```
+- **Fault Tolerance:** If a single gateway times out or encounters network degradation, the remaining platforms resolve cleanly without dropping the entire search.
+
+### 8.3 Price Normalization & Winner Resolution (`normalizer.ts`)
+Raw product listings pass through the normalizer to compute competitive metrics:
+1. **Lowest Active Price Identification:**
+   $$P_{\text{lowest}} = \min_{i} \{ \text{offer}_i.\text{currentPrice} \}$$
+2. **Winning Deal Flag:** The offer matching $P_{\text{lowest}}$ has `isLowestPrice: true` applied, unlocking the visual `"Paling Murah"` UI badge.
+3. **Consumer Savings Delta ($\Delta P$):**
+   $$P_{\text{highest}} = \max_{i} \{ \text{offer}_i.\text{currentPrice} \}$$
+   $$\Delta P = P_{\text{highest}} - P_{\text{lowest}}$$
+4. **Structured PriceRadarResult:** Assembles the unified response object with timestamp, caching status, and trust disclaimers.
 
 ---
 
-## 8. Extensibility & Future Monetization
+## 9. Caching & Security Architecture
 
-### 8.1 AdSlot Architecture
+### 9.1 Redis 7 Caching Strategy
+- **Container Stack:** Managed via `docker-compose.yml` (`redis:7-alpine`, port 6379).
+- **TTL Strategy:** 3600 seconds (1 hour) per query.
+- **Key Schema:** `radar:query:<slug>` (e.g. `radar:query:iphone-15-128gb`).
+- **Resilient Fallback:** The `RadarCacheService` (`src/domain/radar/cache.ts`) includes a built-in in-memory `Map<string, CacheEntry<unknown>>` fallback. If Redis is unreachable, queries are cached in memory with active TTL expiration, preventing service interruption.
+
+### 9.2 Sliding Window Rate Limiting
+To prevent scraper abuse and protect downstream partner services, all radar API routes are guarded by `RateLimiterService` (`src/lib/security/rateLimiter.ts`):
+
+| Endpoint | Target Route | Default Limit | Window | Fallback Technique |
+| :--- | :--- | :--- | :--- | :--- |
+| **Search** | `/api/radar/search` | **20 req/min** | 60 seconds | In-memory timestamp buckets |
+| **Click** | `/api/radar/click` | **60 req/min** | 60 seconds | In-memory timestamp buckets |
+
+- **Atomic Redis Execution:** Evaluated via Redis atomic `INCR` and `EXPIRE`.
+- **RFC 6585 Compliance:** On limit breach, the system returns HTTP 429 Too Many Requests with standardized headers:
+  ```http
+  HTTP/1.1 429 Too Many Requests
+  X-RateLimit-Limit: 20
+  X-RateLimit-Remaining: 0
+  X-RateLimit-Reset: 42
+  Retry-After: 42
+  Content-Type: application/json
+
+  {
+    "success": false,
+    "error": "TOO_MANY_REQUESTS",
+    "message": "Terlalu banyak permintaan pencarian dalam waktu singkat. Silakan tunggu beberapa detik sebelum mencoba kembali.",
+    "retryAfter": 42
+  }
+  ```
+
+---
+
+## 10. Persistence Layer Architecture (Drizzle ORM & Neon Postgres)
+
+The platform utilizes Neon Serverless PostgreSQL with Drizzle ORM (`src/db/schema.ts`) for asynchronous search intelligence and monetization telemetry:
+
+```typescript
+// src/db/schema.ts
+export const trendingSearches = pgTable('trending_searches', {
+  id: serial('id').primaryKey(),
+  query: text('query').notNull().unique(),
+  searchCount: integer('search_count').notNull().default(1),
+  lastSearchedAt: timestamp('last_searched_at').defaultNow().notNull(),
+});
+
+export const priceSnapshots = pgTable('price_snapshots', {
+  id: serial('id').primaryKey(),
+  query: text('query').notNull(),
+  marketplace: varchar('marketplace', { length: 50 }).notNull(),
+  productId: text('product_id').notNull(),
+  productTitle: text('product_title').notNull(),
+  price: integer('price').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const affiliateClicks = pgTable('affiliate_clicks', {
+  id: serial('id').primaryKey(),
+  marketplace: varchar('marketplace', { length: 50 }).notNull(),
+  productId: text('product_id').notNull(),
+  query: text('query'),
+  clientIpHash: text('client_ip_hash'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+```
+
+- **Non-Blocking Telemetry:** All database writes are dispatched asynchronously (`catch(console.error)`) in API route handlers, guaranteeing that telemetry ingestion never increases consumer query latency.
+
+---
+
+## 11. SEO & 301 Permanent Redirect Strategy
+
+### 11.1 Canonical 36-Route Structure
+
+| Route | Subsystem | Intent Target | SSR Content Focus |
+| :--- | :--- | :--- | :--- |
+| `/` | B2C Consumer | `cek harga shopee tokopedia lazada tiktok` | Real-time Price Radar, trending deals, 4-way comparison. |
+| `/seller` | B2B Seller | `kalkulator marketplace indonesia` | Seller Hub, universal profit calculator, platform switcher. |
+| `/seller/kalkulator/marketplace-calculator` | B2B Seller | `kalkulator jualan online marketplace` | Full feature multi-platform seller calculator. |
+| `/seller/kalkulator/shopee` | B2B Seller | `kalkulator profit shopee star seller` | Shopee Star/Mall tiers, Gratis Ongkir Xtra formulas. |
+| `/seller/kalkulator/tokopedia` | B2B Seller | `kalkulator profit tokopedia power merchant` | PM Pro tiers, Bebas Ongkir rate models. |
+| `/seller/kalkulator/tiktok-shop` | B2B Seller | `kalkulator tiktok shop creator affiliate` | TikTok Mall & Marketplace commission, affiliate slider. |
+| `/seller/kalkulator/lazada` | B2B Seller | `kalkulator margin lazada lazmall` | LazMall vs Standard seller fees, Free Shipping Max. |
+| `/seller/biaya-admin/shopee` | B2B Seller | `biaya admin shopee terbaru` | Comprehensive Shopee category fee schedules and rules. |
+| `/seller/biaya-admin/tokopedia` | B2B Seller | `potongan biaya admin tokopedia` | Tokopedia commission categories 1-5, service fee limits. |
+| `/seller/biaya-admin/tiktok-shop` | B2B Seller | `biaya admin tiktok shop seller` | TikTok Shop commission rates by category, payment fee terms. |
+| `/seller/biaya-admin/lazada` | B2B Seller | `biaya komisi lazada indonesia` | Detailed breakdown of Lazada commission and handling fees. |
+| `/seller/komparasi-fee` | B2B Seller | `perbandingan potongan marketplace indonesia` | 4-way comparison matrix, cross-platform margin differences. |
+| `/seller/komparasi-fee/shopee-vs-tokopedia` | B2B Seller | `shopee vs tokopedia lebih murah mana biaya admin` | Head-to-head Shopee Star vs Tokopedia PM Pro analysis. |
+| `/seller/komparasi-fee/shopee-vs-tiktok-shop` | B2B Seller | `shopee vs tiktok shop biaya potongan seller` | Head-to-head affiliate and live commerce commission. |
+| `/seller/komparasi-fee/tokopedia-vs-tiktok-shop` | B2B Seller | `tokopedia vs tiktok shop komisi jualan` | Shop \| Tokopedia integration context and fee structures. |
+
+### 11.2 Next.js 301 Permanent Redirect Engine
+To prevent broken external links and preserve accumulated SEO authority, `next.config.mjs` enforces HTTP 301 redirects:
+```javascript
+// next.config.mjs
+async redirects() {
+  return [
+    { source: '/marketplace-calculator', destination: '/seller/kalkulator/marketplace-calculator', permanent: true },
+    { source: '/shopee-profit-calculator', destination: '/seller/kalkulator/shopee', permanent: true },
+    { source: '/tokopedia-profit-calculator', destination: '/seller/kalkulator/tokopedia', permanent: true },
+    { source: '/tiktok-shop-profit-calculator', destination: '/seller/kalkulator/tiktok-shop', permanent: true },
+    { source: '/lazada-profit-calculator', destination: '/seller/kalkulator/lazada', permanent: true },
+    { source: '/shopee-fee', destination: '/seller/biaya-admin/shopee', permanent: true },
+    { source: '/tokopedia-fee', destination: '/seller/biaya-admin/tokopedia', permanent: true },
+    { source: '/tiktok-shop-fee', destination: '/seller/biaya-admin/tiktok-shop', permanent: true },
+    { source: '/lazada-fee', destination: '/seller/biaya-admin/lazada', permanent: true },
+    { source: '/compare', destination: '/seller/komparasi-fee', permanent: true },
+    { source: '/compare/shopee-vs-tokopedia', destination: '/seller/komparasi-fee/shopee-vs-tokopedia', permanent: true },
+    { source: '/compare/shopee-vs-tiktok-shop', destination: '/seller/komparasi-fee/shopee-vs-tiktok-shop', permanent: true },
+    { source: '/compare/tokopedia-vs-tiktok-shop', destination: '/seller/komparasi-fee/tokopedia-vs-tiktok-shop', permanent: true },
+  ];
+}
+```
+
+### 11.3 Structured Data (Schema.org JSON-LD) Strategy
+Every page automatically injects contextual JSON-LD structured schemas:
+1. **WebApplication / SoftwareApplication:** On all calculator and radar pages (`applicationCategory: BusinessApplication`, `offers: { price: '0', priceCurrency: 'IDR' }`).
+2. **BreadcrumbList:** Hierarchical navigation trail assisting Google SERP snippet formatting.
+3. **FAQPage:** Structured FAQ answering specific consumer and merchant questions.
+4. **HowTo:** Step-by-step workflow structured for Google rich snippets.
+
+---
+
+## 12. Extensibility & Future Monetization
+
+### 12.1 AdSlot Architecture
 ```tsx
 // Abstract Ad Slot Component Pattern
 interface AdSlotProps {
@@ -498,7 +691,6 @@ interface AdSlotProps {
 }
 
 export function AdSlot({ position, className }: AdSlotProps) {
-  // Feature flag check
   if (!ADS_CONFIG.enabled) return null;
 
   return (
@@ -515,59 +707,37 @@ export function AdSlot({ position, className }: AdSlotProps) {
   );
 }
 ```
-- Completely inert in prototype mode.
-- Does not load third-party ad scripts.
-- Guarantees CLS immunity by reserving dimension bounds.
+- Zero layout shift (CLS reserved bounding box).
+- Complete kill-switch via `NEXT_PUBLIC_ADS_ENABLED=false`.
 
-### 8.2 Affiliate Provider Redirection Abstraction
-```typescript
-// src/config/affiliate.ts
-export interface AffiliateDestination {
-  marketplaceId: MarketplaceId;
-  targetType: 'seller-registration' | 'seller-center' | 'official-tools';
-  baseUrl: string;
-  trackingParamKey: string;
-}
-
-export function resolveAffiliateUrl(marketplaceId: MarketplaceId, targetType: string): string {
-  const provider = AFFILIATE_PROVIDERS[marketplaceId];
-  if (!provider) return '#';
-  const affId = process.env.NEXT_PUBLIC_AFFILIATE_ID || 'prototype_preview';
-  return `${provider.baseUrl}?${provider.trackingParamKey}=${encodeURIComponent(affId)}&utm_source=marketplace_intelligence`;
-}
-```
+### 12.2 Outbound Affiliate Redirection (`/api/radar/click`)
+- Radar product clicks route through `/api/radar/click?marketplace=<id>&productId=<id>&url=<encodedUrl>`.
+- The endpoint hashes the client IP for fraud detection, logs click telemetry to Neon Postgres, and issues an HTTP 307 Temporary Redirect to the partner's verified product page with `rel="noopener noreferrer nofollow sponsored"`.
 
 ---
 
-## 9. Assumptions, Unknowns & Out-of-Scope Declarations
+## 13. Assumptions, Unknowns & Out-of-Scope Declarations
 
-### 9.1 Assumptions
+### 13.1 Assumptions
 1. Indonesian sellers calculate unit profit before VAT (PPN 11%) or absorb VAT within the platform commission deduction.
 2. Marketplaces charge commission on the customer-paid product price (excluding direct marketplace vouchers).
-3. The mock fee rates reflect typical published ranges in Indonesia for educational modeling (e.g. 4.0% – 6.5% for Star/Power Merchant).
+3. Redis and Neon Postgres provide non-blocking secondary services; if either service is unreachable, core user-facing functionality degrades gracefully to in-memory mode without downtime.
 
-### 9.2 Unknowns & Verification Strategy
-- *Dynamic Campaign Promotions:* Marketplaces intermittently launch temporary fee discount programs.
-  - *Strategy:* The fee config contains an `isOptional` and `isDefaultActive` flag allowing users to toggle temporary programs (e.g. Flash Sale / Gratis Ongkir Xtra).
-
-### 9.3 Explicitly Out of Scope (What NOT to Build Yet)
+### 13.2 Explicitly Out of Scope (What NOT to Build Yet)
 - ❌ User authentication, sign-in, or session databases.
 - ❌ Payment gateways, Stripe/Midtrans integrations, or premium subscriptions.
-- ❌ Web scrapers or unauthorized automated crawlers targeting marketplace portals.
+- ❌ Unauthorized scrapers or headless browser bots targeting marketplace portals.
 - ❌ Third-party ad network scripts (Google AdSense script injection).
-- ❌ Backend database servers (PostgreSQL / Redis) for the prototype.
-- ❌ Real-time inventory synchronization or order processing.
+- ❌ Real-time inventory synchronization or order fulfillment.
 
 ---
 
-## 10. Testing & Quality Assurance Strategy
+## 14. Testing & Quality Assurance Strategy
 
-The prototype enforces strict unit test coverage using Vitest:
-1. **Zero Fee Baseline:** Base case verification where fees are 0%.
-2. **Standard Percentage Admin Fee:** Validating 4.25% fee on Rp100.000 yields exact Rp4.250.
-3. **Fixed Payment Handling Fee:** Validating Rp1.000 flat fee addition.
-4. **Capped Fees (Min/Max):** Validating programs with fee caps (e.g. 4% with max Rp10.000).
-5. **Break-Even Solver Precision:** Ensuring calculated break-even price produces $\text{Net Profit} \ge 0$ and is within Rp1 of theoretical balance.
-6. **Cross-Marketplace Comparison Invariance:** Running comparison returns identical single-calculation results for every platform.
-7. **Negative Profit / High-Cost Alerts:** Ensuring engine accurately produces negative profit without crashing when costs exceed selling price.
-8. **Invalid & Extreme Input Protection:** Handling negative prices, extreme values (Rp10B), and zero values gracefully.
+The codebase enforces strict unit and integration test coverage using Vitest:
+1. **Calculation Engine Invariance:** Validates 4.25% fee calculations, fixed fees, fee ceilings, and break-even solving accuracy.
+2. **Break-Even Solver Precision:** Ensures calculated break-even price produces $\text{Net Profit} \ge 0$ within Rp1 of theoretical balance.
+3. **Price Radar Aggregator & Normalizer:** Validates multi-gateway output merging, lowest price flag assignment, and price delta calculation ($\Delta P$).
+4. **Resilient Cache Fallback:** Ensures `RadarCacheService` seamlessly falls back to memory cache when Redis is offline.
+5. **Sliding Window Rate Limiter:** Tests request counting, window reset, rate limit breach, and RFC 6585 header generation.
+6. **SEO & Metadata Verification:** Validates that all canonical routes generate valid metadata, titles, and JSON-LD schemas.

@@ -2,7 +2,9 @@
 
 Welcome to the architectural and engineering documentation repository for **Marketplace Intelligence Indonesia** (*Kalkulator Margin & Biaya Marketplace*).
 
-This platform is a high-performance, mobile-first utility designed to help Indonesian e-commerce sellers calculate true unit profit, platform deductions, and cross-marketplace margins across **Shopee**, **Tokopedia**, **TikTok Shop**, and **Lazada**.
+This platform is a high-performance, mobile-first utility operating as a **dual-sided e-commerce intelligence system**:
+1. **Consumer Price Radar (`/`)**: Enables Indonesian shoppers to live-compare product prices across **Shopee**, **Tokopedia**, **TikTok Shop**, and **Lazada**, highlighting the lowest price and monetizing via outbound affiliate links.
+2. **Merchant Profit Intelligence (`/seller/*`)**: Empowers online sellers and UMKM to calculate true unit profit, platform deductions, and cross-marketplace margins with zero ambiguity.
 
 ---
 
@@ -36,37 +38,38 @@ Our technical design is grounded in explicit, recorded architectural decisions:
    - *Why the "Wise × SlickCalc × Marketplace Analytics" model with a font trio and neutral `#FAFAF9` palette was adopted instead of an admin dashboard.*
 8. [**ADR-008: Client Animation Strategy — Motion & Core Web Vitals Safety**](file:///home/andim/ideas/marketplace-intelegence/docs/decisions/ADR-008-client-animation-strategy-motion-and-cls-safety.md)
    - *Why Framer Motion was selected for lightweight spring number transitions and accordion motion without CLS penalties.*
+9. [**ADR-009: Dual-Portal Architecture & Persona Separation (Consumer `/` & Merchant `/seller`)**](file:///home/andim/ideas/marketplace-intelegence/docs/decisions/ADR-009-dual-portal-architecture-and-persona-separation.md)
+   - *Why the platform was separated into a default Consumer Price Radar (`/`) and a dedicated Merchant Hub (`/seller`), with minimalist underline tabs.*
+10. [**ADR-010: B2C Price Radar Engine, Multi-Tier Caching, and Sliding-Window Rate Limiting**](file:///home/andim/ideas/marketplace-intelegence/docs/decisions/ADR-010-b2c-price-radar-engine-caching-and-rate-limiting.md)
+   - *Why Bun, Redis 7 Docker stack (1-hour TTL), sliding window rate limiting (20 req/min), and Neon Postgres via Drizzle ORM were adopted.*
 
 ---
 
-## 🎯 Key Architectural Highlights
-
+### 🎯 Key Architectural Highlights
+ 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      Client Browser                         │
-│  ┌──────────────────────┐       ┌────────────────────────┐  │
-│  │ Calculator Form UI   │       │ Comparison Matrix UI   │  │
-│  └──────────┬───────────┘       └───────────┬────────────┘  │
-└─────────────┼───────────────────────────────┼───────────────┘
-              │                               │
-              ▼                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│          Domain Calculation Engine (Pure TypeScript)        │
-│  • calculateProfit(input, config)                           │
-│  • compareMarketplaces(input, configs)                      │
-│  • calculateBreakEven(input, config)                        │
-│  • formatRupiah(amount)                                     │
-└─────────────────────────────┬───────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│       Declarative Marketplace Registry & Fee Rules          │
-│  • shopee.ts       • tokopedia.ts                           │
-│  • tiktok-shop.ts  • lazada.ts                              │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          User Browser Client                                │
+│   ┌────────────────────────────────┐    ┌───────────────────────────────┐   │
+│   │ Consumer Portal (Route: /)     │    │ Merchant Portal (Route: /seller)│   │
+│   │ • Live Price Radar Search      │    │ • Interactive Profit Calc     │   │
+│   │ • 4-Way Comparison Grid        │    │ • Cost Anatomy Bar            │   │
+│   │ • Outbound Monetized Clicks    │    │ • Margin Health Barometer     │   │
+│   └───────────────┬────────────────┘    └───────────────┬───────────────┘   │
+└───────────────────┼─────────────────────────────────────┼───────────────────┘
+                    │                                     │
+                    ▼ (On-Demand Search API)              ▼ (Client Calculation)
+┌────────────────────────────────────────┐ ┌──────────────────────────────────┐
+│   Consumer Price Radar Subsystem       │ │   Domain Calculation Engine      │
+│   • Redis 7 Cache (1-hr TTL)           │ │   • calculateProfit(input)       │
+│   • Rate Limiter (20 req/min, Sliding) │ │   • compareMarketplaces(input)   │
+│   • Gateway Adapters (4 Marketplaces)  │ │   • calculateBreakEven(input)    │
+│   • Drizzle ORM + Neon Postgres        │ │   • Declarative Fee Rules        │
+└────────────────────────────────────────┘ └──────────────────────────────────┘
 ```
 
-- **Zero-Latency Calculation:** Runs 100% in-browser in < 5ms.
+- **Zero-Latency Calculation:** Seller calculations run 100% in-browser in < 5ms without server hits.
+- **Fast Cached Price Radar:** Consumer searches respond in < 15ms via Redis with in-memory fallback.
 - **SSR/SSG SEO Ready:** Complete semantic HTML and structured schema delivered to search bots on initial HTTP GET.
-- **Pure Domain Engine:** 100% testable with zero React or DOM dependencies.
-- **Monetization Ready:** Pre-allocated AdSlots with zero Cumulative Layout Shift (CLS), toggleable via environment flags.
+- **Pure Domain Engines:** 100% testable with zero React or DOM dependencies.
+- **Protected APIs:** Built-in sliding-window rate limiting (RFC 6585 headers) and zero-layout-shift AdSlots.

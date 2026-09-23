@@ -1,49 +1,78 @@
 # Product Requirements Document (PRD)
 ## Project: Indonesian Marketplace Intelligence & Profit Calculator Platform
 
-- **Document Version:** 1.0.0
-- **Status:** Approved for Architecture & Implementation
-- **Target Release:** Prototype v1.0
+- **Document Version:** 2.0.0
+- **Status:** Approved for Dual-Portal & Price Radar Production
+- **Target Release:** Platform v2.0
 - **Primary Audience:** Engineering, Product, UX/UI, SEO Specialists
 
 ---
 
 ## 1. Product Overview & Vision
 
-**Marketplace Intelligence Indonesia** is a free, blazing-fast, mobile-first utility platform enabling Indonesian e-commerce sellers to calculate true profit, platform deductions, and cross-marketplace margins across Shopee, Tokopedia, TikTok Shop, and Lazada.
+**Marketplace Intelligence Indonesia** is a unified e-commerce intelligence platform operating on a dual-portal architecture that bridges consumer shopping discovery and merchant financial unit-economics:
 
-### 1.1 Core Value Loop
+1. **Consumer Price Radar (B2C at `/`):** A real-time product price and deal comparison engine enabling Indonesian online shoppers to discover, compare, and verify the lowest prices across Shopee, Tokopedia, TikTok Shop, and Lazada in a single search.
+2. **Merchant Profit & Fee Intelligence (B2B at `/seller/*`):** A precision, client-side financial utility and fee schedule documentation suite enabling e-commerce merchants to calculate net margins, marketplace fee deductions, and break-even thresholds.
+
+### 1.1 Core Value Loops
+
+#### A. Consumer Price Radar Loop (B2C)
+```
+User Search Query (e.g. "iPhone 15 128GB" or Trending Tag)
+       ↓
+Input Sanitization & Redis Sliding Window Rate Limiting (20 req/min)
+       ↓
+Cache Lookup (Redis 1-Hour TTL / In-Memory Fallback)
+  ├─ [Cache Hit] → Sub-15ms Instant Hydration
+  └─ [Cache Miss] → Concurrent Gateway Aggregation (Shopee, Tokopedia, TikTok Shop, Lazada)
+       ↓
+Normalization & Cheapest Winner Resolution (Lowest Price Flag + Price Delta ΔP)
+       ↓
+4-Way Comparison Matrix Display (Zero-Emoji, Material UI, Trust Badges)
+       ↓
+Affiliate Outbound Deep-Link Click (/api/radar/click → Verified Marketplace App/Web)
+       ↓
+Telemetry Ingestion (Neon Serverless Postgres: trending_searches, price_snapshots, affiliate_clicks)
+```
+
+#### B. Merchant Profit & Margin Loop (B2B)
 ```
 Search Query (e.g. "Kalkulator Shopee Star Seller")
        ↓
 Search Engine Results Page (SERP)
        ↓
-SSR / Static Content Landing Page with Explanatory Content
+SSR / Static Content Landing Page (/seller/kalkulator/* or /seller/biaya-admin/*)
        ↓
-Interactive Profit Calculator (Client-side execution, instant feedback)
+Interactive Profit Calculator (Client-side execution, sub-5ms feedback)
        ↓
-Detailed Deductions & Net Margin Breakdown
+Detailed Deductions & Net Margin Breakdown (Admin, Payment, Program, Affiliate)
        ↓
-1-Click Cross-Marketplace Comparison Matrix (Shopee vs Toko vs TikTok vs Lazada)
+1-Click Cross-Marketplace Comparison Matrix (Shopee vs Tokopedia vs TikTok Shop vs Lazada)
        ↓
-Deep Links to Fee Documentation / Sibling Calculators / Return Visit Bookmark
+Deep Links to Official Guides / Sibling Calculators / Bookmark
 ```
 
 ---
 
 ## 2. User Personas & Use Cases
 
-### 2.1 Use Case 1: Pre-Pricing Strategy (New Product Launch)
+### 2.1 Use Case 0: B2C Smart Online Shopper (Price Radar Deal Discovery)
+- **User:** Savvy consumer shopping online for smartphones, beauty care, or electronics.
+- **Action:** Lands on `/`, enters "Sony WH-1000XM5" in the search bar, or clicks a trending search chip.
+- **System Output:** Displays side-by-side comparison cards across Shopee, Tokopedia, TikTok Shop, and Lazada. Flags the platform with the absolute lowest price with a `"Paling Murah"` badge, calculates potential savings ($\Delta P$), and provides verified affiliate redirect buttons to buy.
+
+### 2.2 Use Case 1: Pre-Pricing Strategy (New Product Launch)
 - **User:** Fashion seller launching a new hijab line.
-- **Action:** Enters Cost of Goods Sold (COGS/HPP) = Rp45.000, desired margin target = 25%, ad spend budget = Rp5.000.
+- **Action:** Enters Cost of Goods Sold (COGS/HPP) = Rp45.000, desired margin target = 25%, ad spend budget = Rp5.000 at `/seller/kalkulator/shopee`.
 - **System Output:** Calculates target selling price, all expected deductions (Admin fee, Gratis Ongkir Xtra, Payment fee), net take-home cash, and exact break-even price.
 
-### 2.2 Use Case 2: Multi-Channel Expansion Decision
+### 2.3 Use Case 2: Multi-Channel Expansion Decision
 - **User:** Electronics merchant currently only selling on Tokopedia Power Merchant Pro.
-- **Action:** Inputs current SKU economics (Price: Rp250.000, COGS: Rp190.000, Ads: Rp10.000) and clicks "Bandingkan Marketplace".
+- **Action:** Inputs current SKU economics (Price: Rp250.000, COGS: Rp190.000, Ads: Rp10.000) at `/seller/komparasi-fee` and clicks "Bandingkan Marketplace".
 - **System Output:** Side-by-side comparison table showing net profit across Tokopedia vs Shopee Star+ vs TikTok Shop vs Lazada.
 
-### 2.3 Use Case 3: Campaign & Promotion Feasibility Check
+### 2.4 Use Case 3: Campaign & Promotion Feasibility Check
 - **User:** Merchant preparing for Shopee 11.11 / TikTok Mega Sale.
 - **Action:** Tests adding an extra 10% voucher and 5% affiliate commission.
 - **System Output:** Real-time alert if net profit turns negative or drops below safety margin.
@@ -125,36 +154,65 @@ Calculations must be deterministic, pure, and executed in exact sequence:
 
 ### 3.3 Required Pages & Routing Hierarchy
 
-The application mandates exactly 13 primary URLs, each satisfying a dedicated search intent without keyword cannibalization:
+The application deploys a **Dual-Portal Architecture** organizing exactly 36 canonical routes, separating consumer deal comparison from merchant unit-economics while maintaining 100% SEO authority via 301 permanent redirects:
 
 ```
-/
-├── marketplace-calculator                (Universal Multi-Marketplace Calculator)
-├── shopee-profit-calculator              (Shopee Profit & Break-Even Calculator)
-├── shopee-fee                            (Shopee Fee Schedule & Guide)
-├── tokopedia-profit-calculator           (Tokopedia Profit & Break-Even Calculator)
-├── tokopedia-fee                         (Tokopedia Fee Schedule & Guide)
-├── tiktok-shop-profit-calculator         (TikTok Shop Profit & Break-Even Calculator)
-├── tiktok-shop-fee                       (TikTok Shop Fee Schedule & Guide)
-├── lazada-profit-calculator              (Lazada Profit & Break-Even Calculator)
-├── lazada-fee                            (Lazada Fee Schedule & Guide)
-├── compare                               (Comparison Landing Matrix)
-│   ├── shopee-vs-tokopedia               (Head-to-head Comparison)
-│   ├── shopee-vs-tiktok-shop             (Head-to-head Comparison)
-│   └── tokopedia-vs-tiktok-shop          (Head-to-head Comparison)
+/ (Root Domain)
+├── /                                            [B2C] Consumer Price Radar Portal (Default Entry)
+├── /seller                                      [B2B] Seller Portal Main Hub & Profit Calculator
+│   ├── /kalkulator
+│   │   ├── /marketplace-calculator              (Universal Multi-Marketplace Calculator)
+│   │   ├── /shopee                              (Shopee Star/Mall Profit Calculator)
+│   │   ├── /tokopedia                           (Tokopedia PM/Regular Profit Calculator)
+│   │   ├── /tiktok-shop                         (TikTok Shop Profit Calculator)
+│   │   └── /lazada                              (Lazada LazMall/Standard Calculator)
+│   ├── /biaya-admin
+│   │   ├── /shopee                              (Shopee Fee Schedule & Category Guide)
+│   │   ├── /tokopedia                           (Tokopedia Fee Schedule & Category Guide)
+│   │   ├── /tiktok-shop                         (TikTok Shop Fee Schedule & Category Guide)
+│   │   └── /lazada                              (Lazada Fee Schedule & Category Guide)
+│   └── /komparasi-fee
+│       ├── /                                    (4-Way Universal Marketplace Fee Matrix)
+│       ├── /shopee-vs-tokopedia                 (Head-to-head Fee & Margin Comparison)
+│       ├── /shopee-vs-tiktok-shop               (Head-to-head Fee & Margin Comparison)
+│       └── /tokopedia-vs-tiktok-shop            (Head-to-head Fee & Margin Comparison)
+└── /api/radar
+    ├── /search                                  (Cached Aggregation Engine & Rate Limiter)
+    ├── /click                                   (Affiliate Outbound Tracking & Redirect)
+    └── /trending                                (Popular Search Telemetry Aggregator)
 ```
+
+#### Legacy Route 301 Permanent Redirect Mapping
+To prevent broken backlinks and maintain domain authority from early deployments, Next.js handles permanent 301 redirects (`next.config.mjs`):
+
+| Legacy URL | HTTP Status | Permanent Destination URL | Primary Intent Preserved |
+| :--- | :--- | :--- | :--- |
+| `/marketplace-calculator` | 301 Permanent | `/seller/kalkulator/marketplace-calculator` | Universal Seller Calculator |
+| `/shopee-profit-calculator` | 301 Permanent | `/seller/kalkulator/shopee` | Shopee Calculator |
+| `/tokopedia-profit-calculator` | 301 Permanent | `/seller/kalkulator/tokopedia` | Tokopedia Calculator |
+| `/tiktok-shop-profit-calculator`| 301 Permanent | `/seller/kalkulator/tiktok-shop` | TikTok Shop Calculator |
+| `/lazada-profit-calculator` | 301 Permanent | `/seller/kalkulator/lazada` | Lazada Calculator |
+| `/shopee-fee` | 301 Permanent | `/seller/biaya-admin/shopee` | Shopee Fee Guide |
+| `/tokopedia-fee` | 301 Permanent | `/seller/biaya-admin/tokopedia` | Tokopedia Fee Guide |
+| `/tiktok-shop-fee` | 301 Permanent | `/seller/biaya-admin/tiktok-shop` | TikTok Shop Fee Guide |
+| `/lazada-fee` | 301 Permanent | `/seller/biaya-admin/lazada` | Lazada Fee Guide |
+| `/compare` | 301 Permanent | `/seller/komparasi-fee` | Comparison Matrix Hub |
+| `/compare/shopee-vs-tokopedia` | 301 Permanent | `/seller/komparasi-fee/shopee-vs-tokopedia` | Shopee vs Tokopedia |
+| `/compare/shopee-vs-tiktok-shop` | 301 Permanent | `/seller/komparasi-fee/shopee-vs-tiktok-shop` | Shopee vs TikTok Shop |
+| `/compare/tokopedia-vs-tiktok-shop`| 301 Permanent | `/seller/komparasi-fee/tokopedia-vs-tiktok-shop` | Tokopedia vs TikTok Shop |
 
 #### Canonical Page Content Standard
 Every SEO landing page must adhere to the following strict semantic structure:
-1. **Header & Breadcrumbs:** Clear hierarchical breadcrumb navigation (e.g. `Beranda > Shopee > Kalkulator`).
-2. **Single `<h1>` Title:** Target keyword aligned with human intent (e.g. `Kalkulator Profit Shopee: Hitung Potongan Biaya & Margin Bersih`).
-3. **Direct Value Introduction:** 2–3 concise sentences explaining what the tool calculates, target seller tier, and update date.
-4. **Interactive Calculator Widget:** Above-the-fold or immediate scroll view.
-5. **Detailed Result Summary:** Net profit card, margin percentage, break-even price, and accordion fee breakdown.
-6. **Calculation Formula & Walkthrough:** Explicit step-by-step mathematical example using realistic values (e.g. Rp100.000 selling price).
-7. **Educational Fee Summary Table:** Transparent listing of applicable commission rates, seller tiers, and maximum caps.
-8. **Internal Linking Hub:** Links to comparison pages, sister marketplace calculators, and official documentation sources.
-9. **Prototype Disclaimer:** Explicit notice that rules are educational simulations.
+1. **Header & Persona Navigation:** High-contrast header with clean underline indicator displaying the active portal (`Pembeli` vs `Penjual`) without noisy "Mode" tags.
+2. **Breadcrumbs:** Clear hierarchical breadcrumb navigation (e.g. `Beranda > Penjual > Shopee > Kalkulator`).
+3. **Single `<h1>` Title:** Target keyword aligned with human intent (e.g. `Kalkulator Profit Shopee: Hitung Potongan Biaya & Margin Bersih`).
+4. **Direct Value Introduction:** 2–3 concise sentences explaining what the tool calculates, target user/seller tier, and update date.
+5. **Interactive Core Widget:** Above-the-fold or immediate scroll view (Price Radar Search Bar on `/`, Profit Calculator Card on `/seller/*`).
+6. **Detailed Result Summary:** Multi-marketplace side-by-side breakdown with clear savings or net profit indications.
+7. **Calculation Formula / Pricing Logic Walkthrough:** Explicit step-by-step example using realistic values.
+8. **Educational Reference Table:** Transparent commission rates, tier thresholds, or marketplace feature comparisons.
+9. **Internal Linking Hub:** Contextual cross-links between consumer price discovery and merchant fee calculations.
+10. **Prototype / Transparency Disclaimer:** Explicit notice that figures and snapshots are educational simulations.
 
 ---
 
@@ -240,27 +298,103 @@ The platform features an abstract, pluggable analytics interface (`AnalyticsDisp
 | `comparison_started` | User navigates to comparison tab | `{ source_page }` |
 | `comparison_completed` | Comparison calculations rendered | `{ marketplaces_compared: string[], best_margin_marketplace }` |
 | `affiliate_clicked` | User clicks an outbound affiliate link | `{ marketplace, target_type, destination_url }` |
+| `radar_search_performed` | Consumer executes a price radar search | `{ query, lowest_price, winning_marketplace, cached }` |
+| `radar_product_clicked` | Consumer clicks an outbound marketplace deal | `{ marketplace, product_id, price, position }` |
+| `radar_trending_clicked` | Consumer clicks a trending search chip | `{ query, source }` |
+
+---
+
+### 3.8 B2C Consumer Price Radar Engine Specifications
+
+#### Functional Scope & Data Model
+The Price Radar engine powers the consumer portal at `/`, aggregating real-time product offers across 4 major Indonesian marketplaces:
+
+```typescript
+export interface MarketplaceProductOffer {
+  marketplaceId: 'shopee' | 'tokopedia' | 'tiktok-shop' | 'lazada';
+  marketplaceName: string;
+  productId: string;
+  title: string;
+  originalPrice: number;       // Base/strikethrough price in IDR
+  currentPrice: number;        // Active selling price in IDR
+  discountPercentage?: number; // e.g. 15 for 15% off
+  rating: number;              // 0.0 - 5.0
+  totalSold: number;           // Volume sold
+  shopName: string;
+  shopCity?: string;
+  isOfficialStore: boolean;    // Mall / Official / Star seller
+  imageUrl: string;
+  affiliateUrl: string;        // Outbound tracking link
+  isLowestPrice: boolean;      // Calculated winner flag
+}
+
+export interface PriceRadarResult {
+  query: string;
+  lowestPrice: number;
+  highestPrice: number;
+  priceDelta: number;          // Potential savings: highest - lowest
+  winningMarketplaceId: MarketplaceId;
+  winningMarketplaceName: string;
+  updatedAt: string;           // ISO 8601
+  cached: boolean;
+  offers: MarketplaceProductOffer[];
+  disclaimer: string;
+}
+```
+
+#### Price Delta & Winner Resolution Formula
+1. **Lowest Price & Winner Identification:**
+   $$P_{\text{lowest}} = \min_{i} \{ \text{offer}_i.\text{currentPrice} \}$$
+   $$\text{Winner} = \text{offer}_k \quad \text{where} \quad \text{offer}_k.\text{currentPrice} = P_{\text{lowest}}$$
+   $$\text{offer}_k.\text{isLowestPrice} = \text{true}$$
+
+2. **Potential Consumer Savings (Price Delta):**
+   $$P_{\text{highest}} = \max_{i} \{ \text{offer}_i.\text{currentPrice} \}$$
+   $$\Delta P = P_{\text{highest}} - P_{\text{lowest}}$$
+
+#### Caching Architecture (Redis 1-Hour TTL)
+- **Key Schema:** `radar:query:<normalized_slug>` (e.g. `radar:query:iphone-15-128gb`).
+- **TTL:** 3600 seconds (1 hour). Prevents marketplace API quota exhaustion and vendor rate limits.
+- **Fail-Safe Fallback:** If Redis server is unreachable, automatically degrades to an in-memory Map cache without application crashes.
+- **Cache Hit Response Time:** < 15ms.
+
+#### Rate Limiting & Abuse Prevention
+- **Search Endpoint (`/api/radar/search`):** Maximum **20 requests per minute** per client IP.
+- **Click Endpoint (`/api/radar/click`):** Maximum **60 requests per minute** per client IP.
+- **Algorithm:** Atomic sliding-window counters via Redis `INCR` and `EXPIRE` with in-memory bucket fallback.
+- **Rejection Contract:** Returns HTTP 429 Too Many Requests with RFC 6585 headers:
+  - `X-RateLimit-Limit`: configured limit (20 or 60)
+  - `X-RateLimit-Remaining`: remaining quota
+  - `X-RateLimit-Reset`: seconds until window reset
+  - `Retry-After`: seconds until window reset
+
+#### Visual Design & UI Specifications
+- **Button Microcopy:** The search trigger button in `RadarSearchBar.tsx` is strictly labeled `Search` (formerly "Radar Harga").
+- **Persona Header Navigation:** Clear underline active tab indicator toggling between `Pembeli` (B2C) and `Penjual` (B2B) with zero redundant "Mode" labels.
+- **100% Zero-Emoji Standard:** Strict ban on raw emoji characters. Visual signifiers utilize Google Material Symbols and brand SVG vectors (`MarketplaceIcon.tsx`).
 
 ---
 
 ## 4. Non-Functional Requirements (NFR)
 
 ### 4.1 Performance & Client Execution
-- **Zero Server Round-trip for Calculations:** The calculation engine runs 100% client-side in sub-5 milliseconds.
+- **Calculation Latency:** Pure client-side calculations run in sub-5ms.
+- **Radar Cache Hit Latency:** Sub-15ms via Redis 7.
+- **Radar Gateway Aggregation:** Sub-800ms concurrent multi-marketplace fetch via `Promise.allSettled`.
 - **First Contentful Paint (FCP):** < 1.0s on 4G network.
 - **Largest Contentful Paint (LCP):** < 1.8s.
 - **Cumulative Layout Shift (CLS):** < 0.02 (strict zero layout shifts on inputs and ad containers).
-- **Bundle Size:** Zero heavy UI component libraries; lean native Tailwind CSS.
+- **Bundle Size:** Lean native Tailwind CSS with zero heavy third-party UI component suites.
 
 ### 4.2 Accessibility (a11y)
 - Target: **WCAG 2.1 Level AA** compliance.
 - Every form field has an associated `<label>` with explicit `htmlFor`.
-- Keyboard navigation: Full tab sequence across inputs, dropdowns, and buttons.
-- Screen reader announcements for calculated results via `aria-live="polite"`.
+- Keyboard navigation: Full tab sequence across inputs, dropdowns, search bars, and action buttons.
+- Screen reader announcements for calculated results and price alerts via `aria-live="polite"`.
 - Contrast ratio: Minimum 4.5:1 for normal text, 3:1 for large UI components.
 
 ### 4.3 SEO Architecture
-- Static Site Generation (SSG) / Server-Side Rendering (SSR) for all 13 routes.
+- Static Site Generation (SSG) / Server-Side Rendering (SSR) across all 36 canonical routes.
 - Fully rendered HTML containing all headings, explanatory copy, and example calculation tables even when JavaScript is disabled.
 - Automated `sitemap.xml` listing all canonical URLs with `<lastmod>` timestamps.
 - Automated `robots.txt` disallowing crawl of internal query params while allowing indexation of static routes.
@@ -278,6 +412,13 @@ The platform features an abstract, pluggable analytics interface (`AnalyticsDisp
 - [ ] **AC-2:** Entering selling price of Rp100.000, product cost Rp60.000, and standard fees produces the mathematically exact breakdown with integer Rupiah formatting.
 - [ ] **AC-3:** Zero floating point formatting glitches (e.g. no `Rp12.300000000000002`).
 - [ ] **AC-4:** Cross-comparison page displays side-by-side metrics across Shopee, Tokopedia, TikTok Shop, and Lazada using the same underlying numbers.
-- [ ] **AC-5:** All 13 pages pass SSR inspection with complete meta tags, single H1, and pre-rendered explanatory content.
+- [ ] **AC-5:** All 36 canonical routes pass SSR inspection with complete meta tags, single H1, and pre-rendered explanatory content.
 - [ ] **AC-6:** Disabling `ADS_ENABLED` cleans up all ad boxes without layout shifts or broken UI spaces.
 - [ ] **AC-7:** Comprehensive unit test suite validates percentage fees, fixed fees, break-even calculation, zero/empty inputs, and comparison logic.
+- [ ] **AC-8:** Consumer Price Radar on `/` aggregates products across 4 marketplaces, flags the lowest price offer with "Paling Murah", and displays accurate savings delta ($\Delta P$).
+- [ ] **AC-9:** Header navigation cleanly differentiates between `Pembeli` and `Penjual` using active underline styling without redundant "Mode" text labels.
+- [ ] **AC-10:** Radar search button explicitly renders `Search`.
+- [ ] **AC-11:** 100% Zero-Emoji UI compliance across the entire platform, utilizing Google Material Symbols and SVG icons.
+- [ ] **AC-12:** Exceeding 20 requests/minute on `/api/radar/search` returns HTTP 429 Too Many Requests with standard RFC 6585 rate limit headers.
+- [ ] **AC-13:** Outbound clicks route through `/api/radar/click` recording click telemetry before 307 redirecting with `rel="noopener noreferrer nofollow sponsored"`.
+- [ ] **AC-14:** Legacy 13 routes issue HTTP 301 permanent redirects to their `/seller/*` equivalents without link breaking or SEO penalty.

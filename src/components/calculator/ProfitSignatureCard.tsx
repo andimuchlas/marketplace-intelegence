@@ -32,15 +32,15 @@ export function ProfitSignatureCard({
   const isBreakEven = result.netProfit === 0;
 
   const handleCopySummary = () => {
-    const summaryText = `📦 Ringkasan Laba Penjualan (${marketplaceName})
+    const summaryText = `[Ringkasan Laba Penjualan - ${marketplaceName}]
 ---------------------------------------
 Harga Jual    : ${formatRupiah(result.sellingPrice)}
 Modal (HPP)   : ${formatRupiah(result.productCost)}
 Potongan Fee  : ${formatRupiah(result.totalMarketplaceFees + result.paymentFee)}
 Iklan & Promo : ${formatRupiah(result.operationalCosts.total + result.affiliateFee)}
 ---------------------------------------
-${isProfitable ? '✅' : '⚠️'} Laba Bersih : ${formatRupiah(result.netProfit)} (${formatPercentage(result.netMargin)} margin)
-🎯 Harga BEP  : ${formatRupiah(result.breakEvenPrice)} (Titik Impas)
+${isProfitable ? '[PROFIT]' : '[DEFISIT]'} Laba Bersih : ${formatRupiah(result.netProfit)} (${formatPercentage(result.netMargin)} margin)
+• Harga BEP (Titik Impas) : ${formatRupiah(result.breakEvenPrice)}
 ---------------------------------------
 Dihitung via MarketplaceIntel.id`;
 

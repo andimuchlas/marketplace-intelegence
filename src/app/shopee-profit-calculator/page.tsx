@@ -4,6 +4,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { FaqAccordion } from '@/components/seo/FaqAccordion';
 import { SoftwareApplicationJsonLd, FaqPageJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import Link from 'next/link';
 import { ArrowRight, BookOpen, AlertCircle } from 'lucide-react';
 
@@ -61,7 +62,7 @@ export default function ShopeeProfitCalculatorPage() {
         {/* Hero Section */}
         <section className="mb-8">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🟠</span>
+            <MarketplaceIcon id="shopee" size={18} withBackground />
             <span className="text-xs font-bold uppercase tracking-wider text-orange-600">
               Shopee Seller Economics
             </span>

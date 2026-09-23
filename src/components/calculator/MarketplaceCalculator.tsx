@@ -16,6 +16,7 @@ import { compareMarketplaces } from '@/domain/calculator/comparison';
 import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { ProfitSignatureCard } from './ProfitSignatureCard';
 import { FeeBreakdownDrawer } from './FeeBreakdownDrawer';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import { siteConfig } from '@/config/site';
 import { formatRupiah } from '@/lib/formatting/currency';
 
@@ -169,7 +170,7 @@ export function MarketplaceCalculator({
                       : 'text-primary-600 hover:text-primary-900'
                   }`}
                 >
-                  <span>{m.icon}</span>
+                  <MarketplaceIcon id={m.id} size={16} />
                   <span>{m.name}</span>
                   {isSelected && (
                     <motion.div

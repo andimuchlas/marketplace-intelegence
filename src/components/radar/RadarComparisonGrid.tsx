@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Trophy, ExternalLink, Star, ShieldCheck, MapPin, CheckCircle2, Clock } from 'lucide-react';
+import { Trophy, ExternalLink, Star, ShieldCheck, MapPin, CheckCircle2, Clock, Lightbulb } from 'lucide-react';
 import { PriceRadarResult, MarketplaceProductOffer } from '@/domain/radar/types';
 import { formatRupiah } from '@/lib/formatting/currency';
 
@@ -76,7 +76,8 @@ export function RadarComparisonGrid({ result }: RadarComparisonGridProps) {
 
             {hasSavings && (
               <p className="mt-1 text-xs text-primary-600">
-                💡 Potensi hemat hingga{' '}
+                <Lightbulb className="mr-1 inline h-3.5 w-3.5 -mt-0.5 text-amber-500" />
+                Potensi hemat hingga{' '}
                 <strong className="font-mono font-bold text-emerald-700 tabular-nums">
                   {formatRupiah(result.priceDelta)}
                 </strong>{' '}

@@ -4,6 +4,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { FaqAccordion } from '@/components/seo/FaqAccordion';
 import { SoftwareApplicationJsonLd, FaqPageJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import Link from 'next/link';
 import { ArrowRight, AlertCircle } from 'lucide-react';
 
@@ -61,7 +62,7 @@ export default function TokopediaProfitCalculatorPage() {
         {/* Hero Section */}
         <section className="mb-8">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🟢</span>
+            <MarketplaceIcon id="tokopedia" size={18} withBackground />
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">
               Tokopedia Seller Economics
             </span>

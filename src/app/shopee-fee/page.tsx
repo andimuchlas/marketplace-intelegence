@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { FaqAccordion } from '@/components/seo/FaqAccordion';
 import { FaqPageJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import Link from 'next/link';
 import { Calculator, ArrowRight, ExternalLink } from 'lucide-react';
 import { shopeeConfig } from '@/data/marketplaces/shopee';
@@ -56,7 +57,7 @@ export default function ShopeeFeePage() {
         {/* Header */}
         <section className="mb-8">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🟠</span>
+            <MarketplaceIcon id="shopee" size={18} withBackground />
             <span className="text-xs font-bold uppercase tracking-wider text-orange-600">
               Panduan Edukasi Finansial
             </span>

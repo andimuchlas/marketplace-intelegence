@@ -5,6 +5,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { FaqAccordion } from '@/components/seo/FaqAccordion';
 import { SoftwareApplicationJsonLd, FaqPageJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import Link from 'next/link';
 
 export const metadata = constructMetadata({
@@ -99,27 +100,31 @@ export default function MarketplaceCalculatorPage() {
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 text-xs font-semibold">
             <Link
               href="/shopee-profit-calculator"
-              className="rounded-xl border border-orange-200 bg-orange-50/40 p-3 text-orange-900 hover:bg-orange-100/60"
+              className="flex items-center gap-1.5 rounded-xl border border-orange-200 bg-orange-50/40 p-3 text-orange-900 hover:bg-orange-100/60"
             >
-              🟠 Kalkulator Shopee →
+              <MarketplaceIcon id="shopee" size={16} />
+              <span>Kalkulator Shopee →</span>
             </Link>
             <Link
               href="/tokopedia-profit-calculator"
-              className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-3 text-emerald-900 hover:bg-emerald-100/60"
+              className="flex items-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50/40 p-3 text-emerald-900 hover:bg-emerald-100/60"
             >
-              🟢 Kalkulator Tokopedia →
+              <MarketplaceIcon id="tokopedia" size={16} />
+              <span>Kalkulator Tokopedia →</span>
             </Link>
             <Link
               href="/tiktok-shop-profit-calculator"
-              className="rounded-xl border border-stone-300 bg-stone-100/50 p-3 text-stone-900 hover:bg-stone-200/50"
+              className="flex items-center gap-1.5 rounded-xl border border-stone-300 bg-stone-100/50 p-3 text-stone-900 hover:bg-stone-200/50"
             >
-              ⚫ Kalkulator TikTok Shop →
+              <MarketplaceIcon id="tiktok-shop" size={16} />
+              <span>Kalkulator TikTok Shop →</span>
             </Link>
             <Link
               href="/lazada-profit-calculator"
-              className="rounded-xl border border-blue-200 bg-blue-50/40 p-3 text-blue-900 hover:bg-blue-100/60"
+              className="flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50/40 p-3 text-blue-900 hover:bg-blue-100/60"
             >
-              🔵 Kalkulator Lazada →
+              <MarketplaceIcon id="lazada" size={16} />
+              <span>Kalkulator Lazada →</span>
             </Link>
           </div>
         </section>

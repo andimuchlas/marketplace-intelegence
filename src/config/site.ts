@@ -17,9 +17,9 @@ export const siteConfig = {
     { label: 'Biaya Lazada', href: '/lazada-fee' },
   ],
   marketplaces: [
-    { id: 'shopee', name: 'Shopee', color: '#EE4D2D', icon: '🟠' },
-    { id: 'tokopedia', name: 'Tokopedia', color: '#03AC0E', icon: '🟢' },
-    { id: 'tiktok-shop', name: 'TikTok Shop', color: '#000000', icon: '⚫' },
-    { id: 'lazada', name: 'Lazada', color: '#0F146D', icon: '🔵' },
+    { id: 'shopee', name: 'Shopee', color: '#EE4D2D', icon: 'shopping_bag' },
+    { id: 'tokopedia', name: 'Tokopedia', color: '#03AC0E', icon: 'store' },
+    { id: 'tiktok-shop', name: 'TikTok Shop', color: '#000000', icon: 'music_note' },
+    { id: 'lazada', name: 'Lazada', color: '#0F146D', icon: 'diamond' },
   ],
 };

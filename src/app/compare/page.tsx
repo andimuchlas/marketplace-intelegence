@@ -4,6 +4,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { FaqAccordion } from '@/components/seo/FaqAccordion';
 import { FaqPageJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import Link from 'next/link';
 import { ArrowRight, Trophy } from 'lucide-react';
 
@@ -82,9 +83,9 @@ export default function CompareLandingPage() {
               className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-emerald-300 hover:shadow-elevated"
             >
               <div className="flex items-center gap-2 text-lg">
-                <span>🟠</span>
+                <MarketplaceIcon id="shopee" size={18} withBackground />
                 <span className="text-xs font-bold text-stone-400">VS</span>
-                <span>🟢</span>
+                <MarketplaceIcon id="tokopedia" size={18} withBackground />
               </div>
               <h3 className="mt-3 font-display text-base font-bold text-primary-900 group-hover:text-emerald-700">
                 Shopee vs Tokopedia
@@ -103,9 +104,9 @@ export default function CompareLandingPage() {
               className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-stone-400 hover:shadow-elevated"
             >
               <div className="flex items-center gap-2 text-lg">
-                <span>🟠</span>
+                <MarketplaceIcon id="shopee" size={18} withBackground />
                 <span className="text-xs font-bold text-stone-400">VS</span>
-                <span>⚫</span>
+                <MarketplaceIcon id="tiktok-shop" size={18} withBackground />
               </div>
               <h3 className="mt-3 font-display text-base font-bold text-primary-900 group-hover:text-stone-900">
                 Shopee vs TikTok Shop
@@ -124,9 +125,9 @@ export default function CompareLandingPage() {
               className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-emerald-300 hover:shadow-elevated"
             >
               <div className="flex items-center gap-2 text-lg">
-                <span>🟢</span>
+                <MarketplaceIcon id="tokopedia" size={18} withBackground />
                 <span className="text-xs font-bold text-stone-400">VS</span>
-                <span>⚫</span>
+                <MarketplaceIcon id="tiktok-shop" size={18} withBackground />
               </div>
               <h3 className="mt-3 font-display text-base font-bold text-primary-900 group-hover:text-emerald-700">
                 Tokopedia vs TikTok Shop

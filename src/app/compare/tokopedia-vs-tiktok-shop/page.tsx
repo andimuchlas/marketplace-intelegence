@@ -4,6 +4,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { FaqAccordion } from '@/components/seo/FaqAccordion';
 import { FaqPageJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import Link from 'next/link';
 import { CheckCircle2 } from 'lucide-react';
 
@@ -51,9 +52,9 @@ export default function TokopediaVsTikTokShopPage() {
         {/* Header */}
         <section className="mb-8">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🟢</span>
+            <MarketplaceIcon id="tokopedia" size={18} withBackground />
             <span className="text-xs font-bold text-stone-400">VS</span>
-            <span className="text-xl">⚫</span>
+            <MarketplaceIcon id="tiktok-shop" size={18} withBackground />
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
               Sinergi & Komparasi Ekosistem
             </span>
@@ -86,7 +87,7 @@ export default function TokopediaVsTikTokShopPage() {
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="rounded-xl border border-emerald-200 bg-emerald-50/30 p-5">
               <div className="flex items-center gap-2">
-                <span className="text-xl">🟢</span>
+                <MarketplaceIcon id="tokopedia" size={18} withBackground />
                 <h3 className="font-display text-base font-bold text-emerald-950">Kelebihan Tokopedia</h3>
               </div>
               <ul className="mt-4 space-y-2.5 text-xs sm:text-sm text-primary-700">
@@ -103,7 +104,7 @@ export default function TokopediaVsTikTokShopPage() {
 
             <div className="rounded-xl border border-stone-300 bg-stone-100/50 p-5">
               <div className="flex items-center gap-2">
-                <span className="text-xl">⚫</span>
+                <MarketplaceIcon id="tiktok-shop" size={18} withBackground />
                 <h3 className="font-display text-base font-bold text-stone-900">Kelebihan TikTok Shop</h3>
               </div>
               <ul className="mt-4 space-y-2.5 text-xs sm:text-sm text-primary-700">

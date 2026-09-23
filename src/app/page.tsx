@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, ShieldCheck, CheckCircle2, HelpCircle } from 'lucide-react';
 import { GoogleIcon } from '@/components/ui/Icon';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import { constructMetadata } from '@/lib/seo/metadata';
 import { MarketplaceCalculator } from '@/components/calculator/MarketplaceCalculator';
 import { ComparisonMatrix } from '@/components/comparison/ComparisonMatrix';
@@ -125,7 +126,7 @@ export default function HomePage() {
             {/* Shopee Card */}
             <div className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-orange-300 hover:shadow-elevated">
               <div className="flex items-center justify-between">
-                <span className="text-2xl">🟠</span>
+                <MarketplaceIcon id="shopee" size={24} withBackground />
                 <span className="rounded-full bg-orange-50 px-2.5 py-0.5 text-[10px] font-bold text-orange-700">
                   Fashion & FMCG
                 </span>
@@ -151,7 +152,7 @@ export default function HomePage() {
             {/* Tokopedia Card */}
             <div className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-emerald-300 hover:shadow-elevated">
               <div className="flex items-center justify-between">
-                <span className="text-2xl">🟢</span>
+                <MarketplaceIcon id="tokopedia" size={24} withBackground />
                 <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700">
                   Gadget & Home
                 </span>
@@ -177,7 +178,7 @@ export default function HomePage() {
             {/* TikTok Shop Card */}
             <div className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-stone-400 hover:shadow-elevated">
               <div className="flex items-center justify-between">
-                <span className="text-2xl">⚫</span>
+                <MarketplaceIcon id="tiktok-shop" size={24} withBackground />
                 <span className="rounded-full bg-stone-100 px-2.5 py-0.5 text-[10px] font-bold text-stone-800">
                   Live & Affiliate
                 </span>
@@ -203,7 +204,7 @@ export default function HomePage() {
             {/* Lazada Card */}
             <div className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-blue-300 hover:shadow-elevated">
               <div className="flex items-center justify-between">
-                <span className="text-2xl">🔵</span>
+                <MarketplaceIcon id="lazada" size={24} withBackground />
                 <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold text-blue-700">
                   LazMall & Brand
                 </span>

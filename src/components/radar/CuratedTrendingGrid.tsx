@@ -37,7 +37,10 @@ export function CuratedTrendingGrid({ onSelectProduct }: CuratedTrendingGridProp
                 <span className="rounded bg-stone-100 px-2 py-0.5 text-[10px] font-semibold text-primary-600">
                   {item.category}
                 </span>
-                <span className="text-[11px] font-bold text-emerald-700">{item.badge}</span>
+                <span className="inline-flex items-center text-[11px] font-bold text-emerald-700">
+                  <GoogleIcon name={item.badgeIcon} size={13} className="mr-1 text-emerald-600" />
+                  {item.badge}
+                </span>
               </div>
 
               <h4 className="mt-2.5 font-display text-xs font-bold leading-snug text-primary-900 group-hover:text-emerald-700 transition-colors line-clamp-2">

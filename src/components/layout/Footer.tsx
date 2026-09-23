@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Calculator } from 'lucide-react';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import { siteConfig } from '@/config/site';
 
 export function Footer() {
@@ -22,17 +23,17 @@ export function Footer() {
               komisi admin, estimasi keuntungan bersih, dan break-even harga jual produk secara transparan.
             </p>
             <div className="mt-4 flex flex-wrap gap-2 text-xs text-primary-400">
-              <span className="inline-flex items-center rounded-full bg-stone-200/60 px-2 py-0.5 font-medium text-stone-700">
-                🟠 Shopee
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-200/60 px-2.5 py-0.5 font-medium text-stone-700">
+                <MarketplaceIcon id="shopee" size={14} /> Shopee
               </span>
-              <span className="inline-flex items-center rounded-full bg-stone-200/60 px-2 py-0.5 font-medium text-stone-700">
-                🟢 Tokopedia
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-200/60 px-2.5 py-0.5 font-medium text-stone-700">
+                <MarketplaceIcon id="tokopedia" size={14} /> Tokopedia
               </span>
-              <span className="inline-flex items-center rounded-full bg-stone-200/60 px-2 py-0.5 font-medium text-stone-700">
-                ⚫ TikTok Shop
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-200/60 px-2.5 py-0.5 font-medium text-stone-700">
+                <MarketplaceIcon id="tiktok-shop" size={14} /> TikTok Shop
               </span>
-              <span className="inline-flex items-center rounded-full bg-stone-200/60 px-2 py-0.5 font-medium text-stone-700">
-                🔵 Lazada
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-200/60 px-2.5 py-0.5 font-medium text-stone-700">
+                <MarketplaceIcon id="lazada" size={14} /> Lazada
               </span>
             </div>
           </div>

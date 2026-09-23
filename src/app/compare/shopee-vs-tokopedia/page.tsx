@@ -4,6 +4,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { FaqAccordion } from '@/components/seo/FaqAccordion';
 import { FaqPageJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
@@ -51,9 +52,9 @@ export default function ShopeeVsTokopediaPage() {
         {/* Header */}
         <section className="mb-8">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🟠</span>
+            <MarketplaceIcon id="shopee" size={18} withBackground />
             <span className="text-xs font-bold text-stone-400">VS</span>
-            <span className="text-xl">🟢</span>
+            <MarketplaceIcon id="tokopedia" size={18} withBackground />
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
               Analisis Komparasi Head-to-Head
             </span>
@@ -87,7 +88,7 @@ export default function ShopeeVsTokopediaPage() {
             {/* Shopee Card */}
             <div className="rounded-xl border border-orange-200 bg-orange-50/30 p-5">
               <div className="flex items-center gap-2">
-                <span className="text-xl">🟠</span>
+                <MarketplaceIcon id="shopee" size={18} withBackground />
                 <h3 className="font-display text-base font-bold text-orange-950">Karakteristik Shopee</h3>
               </div>
               <ul className="mt-4 space-y-2.5 text-xs sm:text-sm text-primary-700">
@@ -109,7 +110,7 @@ export default function ShopeeVsTokopediaPage() {
             {/* Tokopedia Card */}
             <div className="rounded-xl border border-emerald-200 bg-emerald-50/30 p-5">
               <div className="flex items-center gap-2">
-                <span className="text-xl">🟢</span>
+                <MarketplaceIcon id="tokopedia" size={18} withBackground />
                 <h3 className="font-display text-base font-bold text-emerald-950">Karakteristik Tokopedia</h3>
               </div>
               <ul className="mt-4 space-y-2.5 text-xs sm:text-sm text-primary-700">

@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { FaqAccordion } from '@/components/seo/FaqAccordion';
 import { FaqPageJsonLd, BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import Link from 'next/link';
 import { Calculator, ExternalLink } from 'lucide-react';
 import { tiktokShopConfig } from '@/data/marketplaces/tiktok-shop';
@@ -56,7 +57,7 @@ export default function TikTokShopFeePage() {
         {/* Header */}
         <section className="mb-8">
           <div className="flex items-center gap-2">
-            <span className="text-xl">⚫</span>
+            <MarketplaceIcon id="tiktok-shop" size={18} withBackground />
             <span className="text-xs font-bold uppercase tracking-wider text-stone-900">
               Panduan Edukasi Finansial
             </span>

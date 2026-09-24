@@ -114,7 +114,7 @@ export default async function HomePage() {
 
           {/* Editorial Educational & FAQ Section */}
           <div id="panduan" className="mt-16 border-t border-stone-200 pt-12">
-            <div className="max-w-4xl">
+            <div className="w-full">
               <h2 className="font-display text-2xl font-bold text-primary-900">
                 Panduan Cerdas Membandingkan Harga E-commerce
               </h2>

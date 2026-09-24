@@ -10,9 +10,13 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand Col */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-900 text-white">
-                <Calculator className="h-4 w-4" />
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-stone-900 p-1 shadow-xs">
+                <img
+                  src="/logo-icon.png"
+                  alt="MarketplaceIntel Logo"
+                  className="h-full w-full object-contain"
+                />
               </div>
               <span className="font-display text-base font-bold text-primary-900">
                 Marketplace<span className="text-emerald-600">Intel</span>

@@ -57,8 +57,12 @@ export function Header() {
         {/* Brand Logo */}
         <div className="flex items-center gap-4 sm:gap-8 shrink-0">
           <Link href="/" className="group flex items-center gap-2.5 transition-opacity hover:opacity-90">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-900 text-white shadow-sm transition-transform group-hover:scale-105">
-              <Calculator className="h-5 w-5" />
+            <div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-stone-900 p-1 shadow-sm transition-transform group-hover:scale-105">
+              <img
+                src="/logo-icon.png"
+                alt="MarketplaceIntel Logo"
+                className="h-full w-full object-contain"
+              />
             </div>
             <div className="flex flex-col">
               <span className="font-display text-base font-bold tracking-tight text-primary-900 sm:text-lg">

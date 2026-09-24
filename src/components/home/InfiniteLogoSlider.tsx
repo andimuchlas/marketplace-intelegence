@@ -12,22 +12,22 @@ const AFFILIATE_PARTNERS: AffiliatePartner[] = [
   {
     name: 'Shopee',
     logo: '/assets/logo/shopee.png',
-    heightClass: 'h-8 sm:h-9',
+    heightClass: 'h-11 sm:h-14',
   },
   {
     name: 'Tokopedia',
     logo: '/assets/logo/tokopedia.png',
-    heightClass: 'h-8 sm:h-9',
+    heightClass: 'h-11 sm:h-14',
   },
   {
     name: 'TikTok Shop',
     logo: '/assets/logo/tiktok.png',
-    heightClass: 'h-7 sm:h-8',
+    heightClass: 'h-10 sm:h-13',
   },
   {
     name: 'Lazada',
     logo: '/assets/logo/lazada.png',
-    heightClass: 'h-7 sm:h-8',
+    heightClass: 'h-9 sm:h-12',
   },
 ];
 
@@ -43,19 +43,17 @@ export function InfiniteLogoSlider({ className = '' }: { className?: string }) {
   ];
 
   return (
-    <div
-      className={`w-full overflow-hidden rounded-2xl border border-stone-200/90 bg-white py-5 px-4 sm:px-6 shadow-card ${className}`}
-    >
+    <div className={`w-full py-4 sm:py-6 overflow-hidden ${className}`}>
       {/* Header Label - Clean title only without extra sub-text or tags */}
-      <div className="text-center mb-4">
-        <h3 className="font-display text-xs font-bold uppercase tracking-widest text-stone-500 sm:text-[13px]">
+      <div className="text-center mb-5 sm:mb-6">
+        <h3 className="font-display text-xs font-bold uppercase tracking-widest text-stone-600 sm:text-[13px]">
           Official Affiliate Partners
         </h3>
       </div>
 
-      {/* Marquee Track with Inner Edge Fade Masks */}
-      <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_6%,white_94%,transparent)]">
-        <div className="flex w-max animate-marquee hover:[animation-play-state:paused] items-center gap-12 sm:gap-16 py-1">
+      {/* Seamless Marquee Track with Soft Edge Fade Masks */}
+      <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]">
+        <div className="flex w-max animate-marquee hover:[animation-play-state:paused] items-center gap-14 sm:gap-20 py-2">
           {extendedList.map((partner, idx) => (
             <div
               key={`${partner.name}-${idx}`}
@@ -64,7 +62,7 @@ export function InfiniteLogoSlider({ className = '' }: { className?: string }) {
               <img
                 src={partner.logo}
                 alt={partner.name}
-                className={`${partner.heightClass} w-auto object-contain opacity-85 hover:opacity-100 transition-opacity`}
+                className={`${partner.heightClass} w-auto object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-2xs`}
                 loading="lazy"
               />
             </div>

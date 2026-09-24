@@ -68,9 +68,6 @@ export function RadarClientContainer({
       {/* Affiliate Promo & Spotlight Deals Carousel */}
       <AffiliateCarousel />
 
-      {/* Infinite Ecosystem & Logistics Marquee */}
-      <InfiniteLogoSlider />
-
       {/* Error / Rate Limit Alert */}
       {error && (
         <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800 shadow-2xs flex items-center gap-2">
@@ -92,6 +89,11 @@ export function RadarClientContainer({
             router.push(`/search?q=${encodeURIComponent(productName)}`)
           }
         />
+      </div>
+
+      {/* Official Affiliate Partners (Seamless Marquee) */}
+      <div className="pt-2">
+        <InfiniteLogoSlider />
       </div>
 
       {/* Bridge to Seller Calculator */}

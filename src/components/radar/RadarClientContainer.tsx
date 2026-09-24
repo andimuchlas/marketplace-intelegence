@@ -60,7 +60,8 @@ export function RadarClientContainer({
     <div className="space-y-8">
       {/* Search Bar */}
       <RadarSearchBar
-        initialQuery={query}
+        initialQuery=""
+        activeBenchmark={query}
         onSearch={handleSearch}
         isLoading={isLoading}
       />

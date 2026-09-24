@@ -445,7 +445,7 @@ function findShopeeAffiliateMatches(keyword: string, maxCount: number): Marketpl
       originalPrice,
       currentPrice: item.price,
       discountPercentage: discountPct,
-      rating: 4.8 + (index % 3) * 0.1,
+      rating: Math.round((4.8 + (index % 3) * 0.1) * 10) / 10,
       totalSold: parseSoldCount(item.sold),
       shopName: item.shop,
       shopCity: 'Jakarta',

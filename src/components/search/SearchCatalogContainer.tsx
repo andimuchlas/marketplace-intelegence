@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { PriceRadarResult, MarketplaceProductOffer } from '@/domain/radar/types';
 import { SearchBestDealBanner } from './SearchBestDealBanner';
 import { SearchFilterSidebar, FilterState } from './SearchFilterSidebar';
@@ -149,7 +149,7 @@ export function SearchCatalogContainer({
             onClick={() => setIsMobileFilterOpen(true)}
             className="flex items-center gap-1.5 rounded-lg border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs font-semibold text-stone-800 lg:hidden hover:bg-stone-100"
           >
-            <SlidersHorizontal className="h-3.5 w-3.5 text-emerald-700" />
+            <GoogleIcon name="tune" size={14} className="text-emerald-700" />
             <span>Filter</span>
             {activeFilterCount > 0 && (
               <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
@@ -162,7 +162,7 @@ export function SearchCatalogContainer({
         {/* Sort Tabs */}
         <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
           <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-stone-500 mr-2 shrink-0">
-            <ArrowUpDown className="h-3.5 w-3.5" />
+            <GoogleIcon name="swap_vert" size={15} />
             <span>Urutkan:</span>
           </div>
 

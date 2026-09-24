@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { radarAggregator } from '@/domain/radar/radarAggregator';
 import { RadarClientContainer } from '@/components/radar/RadarClientContainer';
 import { AdSlot } from '@/components/ads/AdSlot';
-import { Radar, Compass, HelpCircle, ShieldCheck, Zap } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 
 export const metadata: Metadata = {
   title: 'Marketplace Intelligence: Bandingkan Harga Shopee, Tokopedia, TikTok, Lazada',
@@ -81,7 +81,7 @@ export default async function HomePage() {
           {/* Hero Section (Consumer Focused) */}
           <div className="mb-8 text-center sm:text-left">
             <div className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-3.5 py-1 shadow-subtle">
-              <Radar className="h-3.5 w-3.5 text-emerald-600 animate-pulse" />
+              <GoogleIcon name="radar" size={15} className="text-emerald-600 animate-pulse" />
               <span className="text-xs font-semibold text-primary-800">
                 Radar Harga Multi-Marketplace 2025
               </span>
@@ -121,17 +121,17 @@ export default async function HomePage() {
 
               <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
                 <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-subtle">
-                  <Zap className="h-5 w-5 text-amber-600" />
+                  <GoogleIcon name="bolt" size={20} filled className="text-amber-600" />
                   <h3 className="mt-3 font-display text-sm font-bold text-primary-900">
                     Katalog Real-Time
                   </h3>
                   <p className="mt-1.5 text-xs text-primary-600 leading-relaxed">
-                    Data harga ditarik secara on-demand dan di-cache secara efisien untuk menyajikan perbandingan akurat dengan waktu tunggu sangat cepat.
+                    Data harga disajikan secara cepat dan terpadu untuk menyajikan perbandingan akurat dengan waktu tunggu sangat singkat.
                   </p>
                 </div>
 
                 <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-subtle">
-                  <ShieldCheck className="h-5 w-5 text-emerald-600" />
+                  <GoogleIcon name="verified" size={20} filled className="text-emerald-600" />
                   <h3 className="mt-3 font-display text-sm font-bold text-primary-900">
                     Prioritas Toko Resmi
                   </h3>
@@ -141,7 +141,7 @@ export default async function HomePage() {
                 </div>
 
                 <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-subtle">
-                  <Compass className="h-5 w-5 text-blue-600" />
+                  <GoogleIcon name="explore" size={20} filled className="text-blue-600" />
                   <h3 className="mt-3 font-display text-sm font-bold text-primary-900">
                     Transparansi Penuh
                   </h3>
@@ -154,7 +154,7 @@ export default async function HomePage() {
               {/* FAQ Section */}
               <div className="mt-10">
                 <div className="flex items-center gap-2">
-                  <HelpCircle className="h-4 w-4 text-primary-500" />
+                  <GoogleIcon name="help" size={16} filled className="text-primary-500" />
                   <h3 className="font-display text-base font-bold text-primary-900">
                     Pertanyaan yang Sering Diajukan (FAQ)
                   </h3>

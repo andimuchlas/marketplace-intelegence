@@ -8,7 +8,8 @@ import { RadarComparisonGrid } from './RadarComparisonGrid';
 import { RadarDisclaimerBox } from './RadarDisclaimerBox';
 import { CuratedTrendingGrid } from './CuratedTrendingGrid';
 import { AffiliateCarousel } from '@/components/home/AffiliateCarousel';
-import { AlertCircle, ArrowUpRight } from 'lucide-react';
+import { InfiniteLogoSlider } from '@/components/home/InfiniteLogoSlider';
+import { GoogleIcon } from '@/components/ui/Icon';
 import Link from 'next/link';
 
 interface RadarClientContainerProps {
@@ -67,10 +68,13 @@ export function RadarClientContainer({
       {/* Affiliate Promo & Spotlight Deals Carousel */}
       <AffiliateCarousel />
 
+      {/* Infinite Ecosystem & Logistics Marquee */}
+      <InfiniteLogoSlider />
+
       {/* Error / Rate Limit Alert */}
       {error && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800 shadow-subtle flex items-center gap-2">
-          <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800 shadow-2xs flex items-center gap-2">
+          <GoogleIcon name="error" size={16} filled className="text-rose-600" />
           <span>{error}</span>
         </div>
       )}
@@ -109,7 +113,7 @@ export function RadarClientContainer({
             className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-primary-900 px-5 py-3 text-xs font-semibold text-white shadow-card hover:bg-black transition-all active:scale-95"
           >
             <span>Buka Kalkulator Seller</span>
-            <ArrowUpRight className="h-4 w-4" />
+            <GoogleIcon name="arrow_outward" size={15} />
           </Link>
         </div>
       </div>

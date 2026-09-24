@@ -109,6 +109,30 @@ describe('Radar Domain & Aggregator', () => {
       expect(result.offers[0].currentPrice).toBe(85501);
       expect(result.offers[0].originalPrice).toBe(100000);
     });
+
+    it('normalizes floating point ratings to 1 decimal place', () => {
+      const mockOffers: MarketplaceProductOffer[] = [
+        {
+          marketplaceId: 'shopee',
+          marketplaceName: 'Shopee',
+          productId: 's1',
+          title: 'Handgrip Racing',
+          originalPrice: 114600,
+          currentPrice: 110500,
+          rating: 4.8999999999999995,
+          totalSold: 4000,
+          shopName: 'Spin Racing',
+          shopCity: 'Jakarta',
+          isOfficialStore: false,
+          imageUrl: '',
+          affiliateUrl: '',
+          isLowestPrice: false,
+        },
+      ];
+
+      const result = normalizeRadarOffers('Handgrip Racing', mockOffers);
+      expect(result.offers[0].rating).toBe(4.9);
+    });
   });
 
   describe('radarAggregator', () => {

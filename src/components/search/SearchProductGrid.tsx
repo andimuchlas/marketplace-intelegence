@@ -1,6 +1,6 @@
 'use client';
 
-import { SearchX, RotateCcw } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { MarketplaceProductOffer } from '@/domain/radar/types';
 import { SearchProductCard } from './SearchProductCard';
 
@@ -19,7 +19,7 @@ export function SearchProductGrid({
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-stone-300 bg-white p-12 text-center shadow-xs">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-stone-400">
-          <SearchX className="h-7 w-7" />
+          <GoogleIcon name="search_off" size={28} />
         </div>
         <h3 className="mt-4 font-display text-base font-bold text-stone-900">
           Tidak Ada Produk yang Cocok
@@ -33,7 +33,7 @@ export function SearchProductGrid({
             onClick={onResetFilters}
             className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-stone-900 px-4 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-stone-800 transition-all active:scale-95"
           >
-            <RotateCcw className="h-3.5 w-3.5" />
+            <GoogleIcon name="refresh" size={14} />
             <span>Reset Semua Filter</span>
           </button>
         )}

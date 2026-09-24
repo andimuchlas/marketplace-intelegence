@@ -18,6 +18,7 @@ export function normalizeRadarOffers(
       ...o,
       originalPrice: Math.round(o.originalPrice || o.currentPrice),
       currentPrice: Math.round(o.currentPrice),
+      rating: Math.min(5.0, Math.max(1.0, Math.round(Number(o.rating || 4.8) * 10) / 10)),
       isLowestPrice: false,
     }));
 

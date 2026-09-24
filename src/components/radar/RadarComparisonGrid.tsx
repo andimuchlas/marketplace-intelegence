@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Trophy, ExternalLink, Star, ShieldCheck, MapPin, CheckCircle2, Clock, Lightbulb } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { PriceRadarResult, MarketplaceProductOffer } from '@/domain/radar/types';
 import { formatRupiah } from '@/lib/formatting/currency';
 
@@ -54,7 +54,7 @@ export function RadarComparisonGrid({ result }: RadarComparisonGridProps) {
           <div>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">
-                <Trophy className="h-3.5 w-3.5" />
+                <GoogleIcon name="emoji_events" size={14} filled className="text-emerald-700" />
                 Hasil Radar Harga
               </span>
               <span className="text-xs text-primary-400">
@@ -76,27 +76,13 @@ export function RadarComparisonGrid({ result }: RadarComparisonGridProps) {
 
             {hasSavings && (
               <p className="mt-1 text-xs text-primary-600">
-                <Lightbulb className="mr-1 inline h-3.5 w-3.5 -mt-0.5 text-amber-500" />
+                <GoogleIcon name="lightbulb" size={14} filled className="mr-1 inline text-amber-500" />
                 Potensi hemat hingga{' '}
                 <strong className="font-mono font-bold text-emerald-700 tabular-nums">
                   {formatRupiah(result.priceDelta)}
                 </strong>{' '}
                 dibandingkan penawaran tertinggi ({formatRupiah(result.highestPrice)}).
               </p>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2 self-start sm:self-center">
-            {result.cached ? (
-              <span className="inline-flex items-center gap-1 rounded-full border border-stone-200 bg-stone-50 px-2.5 py-1 text-[11px] font-medium text-primary-500">
-                <Clock className="h-3 w-3 text-primary-400" />
-                Data Cache 1 Jam
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">
-                <CheckCircle2 className="h-3 w-3 text-emerald-600" />
-                Live Price Fetch
-              </span>
             )}
           </div>
         </div>
@@ -120,12 +106,14 @@ function OfferCard({ offer, query }: { offer: MarketplaceProductOffer; query: st
     name: offer.marketplaceName,
   };
 
-  // Build safe outbound link routing through click tracking
+  // Safe outbound link routing through click tracking
   const clickTrackingUrl = `/api/radar/click?marketplace=${encodeURIComponent(
     offer.marketplaceId
   )}&productId=${encodeURIComponent(offer.productId)}&q=${encodeURIComponent(query)}&targetUrl=${encodeURIComponent(
     offer.affiliateUrl
   )}`;
+
+  const formattedRating = Number(offer.rating || 4.8).toFixed(1);
 
   return (
     <motion.div
@@ -134,14 +122,14 @@ function OfferCard({ offer, query }: { offer: MarketplaceProductOffer; query: st
       transition={{ duration: 0.3 }}
       className={`relative flex flex-col justify-between overflow-hidden rounded-2xl border transition-all ${
         offer.isLowestPrice
-          ? 'border-emerald-500 bg-gradient-to-b from-emerald-50/30 to-white shadow-elevated ring-2 ring-emerald-500/20'
-          : 'border-stone-200 bg-white shadow-card hover:border-stone-300'
+          ? 'border-emerald-500/80 bg-gradient-to-b from-emerald-50/40 via-white to-white shadow-lg shadow-emerald-500/10 ring-2 ring-emerald-500/30'
+          : 'border-stone-200 bg-white shadow-card hover:border-stone-300 hover:shadow-md'
       }`}
     >
       {/* Lowest Price Winner Banner */}
       {offer.isLowestPrice && (
-        <div className="flex items-center justify-center gap-1 bg-emerald-600 py-1.5 px-3 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm">
-          <Trophy className="h-3 w-3" />
+        <div className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 py-1.5 px-3 text-[11px] font-bold uppercase tracking-wider text-white shadow-xs">
+          <GoogleIcon name="emoji_events" size={14} filled className="text-white" />
           <span>Paling Termurah</span>
         </div>
       )}
@@ -157,7 +145,7 @@ function OfferCard({ offer, query }: { offer: MarketplaceProductOffer; query: st
           </span>
           {offer.isOfficialStore && (
             <span className="flex items-center gap-0.5 text-[11px] font-semibold text-emerald-700">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+              <GoogleIcon name="verified" size={14} filled className="text-emerald-600" />
               Resmi
             </span>
           )}
@@ -177,12 +165,12 @@ function OfferCard({ offer, query }: { offer: MarketplaceProductOffer; query: st
             {formatRupiah(offer.currentPrice)}
           </div>
           {offer.originalPrice > offer.currentPrice && (
-            <div className="mt-0.5 flex items-center gap-1.5 text-xs">
+            <div className="mt-1 flex items-center gap-1.5 text-xs">
               <span className="font-mono text-primary-400 line-through tabular-nums">
                 {formatRupiah(offer.originalPrice)}
               </span>
               {offer.discountPercentage && (
-                <span className="rounded bg-rose-50 px-1.5 py-0.2 font-mono text-[10px] font-bold text-rose-600">
+                <span className="rounded bg-rose-50 border border-rose-100 px-1.5 py-0.2 font-mono text-[10px] font-bold text-rose-600">
                   -{offer.discountPercentage}%
                 </span>
               )}
@@ -196,7 +184,7 @@ function OfferCard({ offer, query }: { offer: MarketplaceProductOffer; query: st
             <span className="truncate font-medium text-primary-700">{offer.shopName}</span>
             {offer.shopCity && (
               <span className="flex items-center gap-0.5 text-[11px] text-primary-400">
-                <MapPin className="h-3 w-3" />
+                <GoogleIcon name="location_on" size={13} className="text-stone-400" />
                 {offer.shopCity}
               </span>
             )}
@@ -204,8 +192,8 @@ function OfferCard({ offer, query }: { offer: MarketplaceProductOffer; query: st
 
           <div className="mt-1.5 flex items-center justify-between text-[11px]">
             <span className="flex items-center gap-1 font-semibold text-amber-600">
-              <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-              {offer.rating}
+              <GoogleIcon name="star" size={14} filled className="text-amber-500" />
+              <span>{formattedRating}</span>
             </span>
             <span className="font-mono text-primary-400 tabular-nums">
               {offer.totalSold > 1000 ? `${(offer.totalSold / 1000).toFixed(1)}rb terjual` : `${offer.totalSold} terjual`}
@@ -220,14 +208,14 @@ function OfferCard({ offer, query }: { offer: MarketplaceProductOffer; query: st
           href={clickTrackingUrl}
           target="_blank"
           rel="noopener noreferrer nofollow sponsored"
-          className={`flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 px-4 text-xs font-semibold shadow-sm transition-all active:scale-95 ${
+          className={`flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 px-4 text-xs font-semibold shadow-xs transition-all active:scale-[0.98] ${
             offer.isLowestPrice
               ? 'bg-emerald-700 text-white hover:bg-emerald-800 shadow-subtle'
               : 'border border-stone-300 bg-white text-primary-800 hover:border-emerald-600 hover:text-emerald-800'
           }`}
         >
           <span>Beli di {meta.name}</span>
-          <ExternalLink className="h-3.5 w-3.5" />
+          <GoogleIcon name="open_in_new" size={14} />
         </a>
       </div>
     </motion.div>

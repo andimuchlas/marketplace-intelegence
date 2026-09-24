@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ChevronRight, Home } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 
 export interface BreadcrumbItem {
   label: string;
@@ -19,7 +19,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
             href="/"
             className="flex items-center gap-1 text-primary-500 transition-colors hover:text-primary-900"
           >
-            <Home className="h-3.5 w-3.5" />
+            <GoogleIcon name="home" size={15} />
             <span>Beranda</span>
           </Link>
         </li>
@@ -27,7 +27,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
           const isLast = idx === items.length - 1;
           return (
             <li key={idx} className="flex items-center space-x-2">
-              <ChevronRight className="h-3.5 w-3.5 text-stone-400" />
+              <GoogleIcon name="chevron_right" size={15} className="text-stone-400" />
               {item.href && !isLast ? (
                 <Link
                   href={item.href}

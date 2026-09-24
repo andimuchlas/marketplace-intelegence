@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Filter, RotateCcw, ShieldCheck, Star, X } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 
 export interface FilterState {
@@ -81,7 +81,7 @@ export function SearchFilterSidebar({
       {/* Header with Title and Reset */}
       <div className="flex items-center justify-between border-b border-stone-200 pb-3">
         <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-emerald-700" />
+          <GoogleIcon name="tune" size={16} className="text-emerald-700" />
           <h2 className="font-display text-sm font-bold text-stone-900 uppercase tracking-wider">
             Filter Katalog
           </h2>
@@ -97,7 +97,7 @@ export function SearchFilterSidebar({
             }}
             className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 hover:text-rose-700 transition-colors"
           >
-            <RotateCcw className="h-3 w-3" />
+            <GoogleIcon name="refresh" size={13} />
             <span>Reset</span>
           </button>
         )}
@@ -203,7 +203,7 @@ export function SearchFilterSidebar({
             onChange={(e) => onFilterChange({ ...filters, officialOnly: e.target.checked })}
             className="h-4 w-4 rounded border-stone-300 text-emerald-600 focus:ring-emerald-500"
           />
-          <ShieldCheck className="h-4 w-4 text-emerald-600" />
+          <GoogleIcon name="verified" size={16} filled className="text-emerald-600" />
           <span className="font-medium">Hanya Official Store / Mall</span>
         </label>
       </div>
@@ -234,7 +234,7 @@ export function SearchFilterSidebar({
                 <div className="flex items-center gap-1.5">
                   {r.value !== null ? (
                     <>
-                      <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                      <GoogleIcon name="star" size={14} filled className="text-amber-400" />
                       <span>{r.value}+</span>
                     </>
                   ) : (
@@ -290,7 +290,7 @@ export function SearchFilterSidebar({
                 onClick={onCloseMobile}
                 className="rounded-lg p-1.5 text-stone-500 hover:bg-stone-100"
               >
-                <X className="h-5 w-5" />
+                <GoogleIcon name="close" size={20} />
               </button>
             </div>
             {content}

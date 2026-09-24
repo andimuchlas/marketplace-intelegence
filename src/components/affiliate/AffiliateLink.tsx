@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ExternalLink } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { resolveAffiliateUrl, AFFILIATE_PROVIDERS } from '@/config/affiliate';
 import { clsx } from 'clsx';
 
@@ -30,7 +30,7 @@ export function AffiliateLink({
       )}
     >
       <span>{children || provider?.label || 'Kunjungi Situs'}</span>
-      {showIcon && <ExternalLink className="h-3 w-3 opacity-70" />}
+      {showIcon && <GoogleIcon name="open_in_new" size={13} className="opacity-70" />}
     </a>
   );
 }

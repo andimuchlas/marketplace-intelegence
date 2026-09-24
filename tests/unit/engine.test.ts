@@ -22,8 +22,8 @@ describe('Calculation Engine - Behavioral Tests', () => {
     sourceUrl: 'https://example.com',
     disclaimer: 'Mock disclaimer',
     isPrototypeData: true,
-    sellerTiers: [{ id: 'tier_a', name: 'Tier A', isDefault: true }],
-    categories: [{ id: 'cat_general', name: 'General', defaultAdminFeeRate: 0.05 }],
+    sellerTiers: [{ id: 'tier_a', name: 'Tier A', description: 'Tier A', isDefault: true }],
+    categories: [{ id: 'cat_general', name: 'General', description: 'General', defaultAdminFeeRate: 0.05 }],
     rules: [
       {
         id: 'rule_admin_pct',

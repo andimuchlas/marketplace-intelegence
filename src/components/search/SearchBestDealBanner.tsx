@@ -1,6 +1,6 @@
 'use client';
 
-import { Trophy, TrendingDown, ArrowRight, ShieldCheck } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { PriceRadarResult } from '@/domain/radar/types';
 import { formatRupiah } from '@/lib/formatting/currency';
 import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
@@ -29,13 +29,13 @@ export function SearchBestDealBanner({ result }: SearchBestDealBannerProps) {
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-white shadow-xs">
-              <Trophy className="h-3.5 w-3.5" />
+              <GoogleIcon name="emoji_events" size={14} filled className="text-white" />
               <span>Penawaran Termurah Ditemukan</span>
             </span>
 
             {savingsPct > 0 && (
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 text-xs font-bold text-emerald-800">
-                <TrendingDown className="h-3.5 w-3.5 text-emerald-700" />
+                <GoogleIcon name="trending_down" size={14} className="text-emerald-700" />
                 <span>{savingsPct}% Lebih Murah</span>
               </span>
             )}
@@ -69,7 +69,7 @@ export function SearchBestDealBanner({ result }: SearchBestDealBannerProps) {
         <div className="flex items-center gap-3 shrink-0">
           <div className="hidden sm:flex flex-col items-end text-right">
             <span className="text-[11px] font-semibold text-stone-500 flex items-center gap-1">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+              <GoogleIcon name="verified" size={14} filled className="text-emerald-600" />
               Transaksi Langsung di Aplikasi Resmi
             </span>
             <span className="text-[10px] text-stone-400">Garansi & Perlindungan Konsumen</span>
@@ -82,7 +82,7 @@ export function SearchBestDealBanner({ result }: SearchBestDealBannerProps) {
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-subtle hover:bg-emerald-800 active:scale-95 transition-all"
           >
             <span>Beli Termurah di {result.winningMarketplaceName}</span>
-            <ArrowRight className="h-4 w-4" />
+            <GoogleIcon name="arrow_forward" size={16} />
           </a>
         </div>
       </div>

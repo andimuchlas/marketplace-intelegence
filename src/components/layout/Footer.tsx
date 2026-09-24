@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Calculator } from 'lucide-react';
 import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import { siteConfig } from '@/config/site';
 

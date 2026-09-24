@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ChevronRight, Home } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { radarAggregator } from '@/domain/radar/radarAggregator';
 import { SearchCatalogContainer } from '@/components/search/SearchCatalogContainer';
 import { AdSlot } from '@/components/ads/AdSlot';
@@ -71,12 +71,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               href="/"
               className="inline-flex items-center gap-1 text-stone-600 transition-colors hover:text-stone-900"
             >
-              <Home className="h-3.5 w-3.5" />
+              <GoogleIcon name="home" size={15} />
               <span>Beranda</span>
             </Link>
-            <ChevronRight className="h-3 w-3 text-stone-400" />
+            <GoogleIcon name="chevron_right" size={14} className="text-stone-400" />
             <span className="text-stone-500">Katalog Radar</span>
-            <ChevronRight className="h-3 w-3 text-stone-400" />
+            <GoogleIcon name="chevron_right" size={14} className="text-stone-400" />
             <span className="font-semibold text-stone-900 truncate max-w-xs">
               &quot;{query}&quot;
             </span>

@@ -2,7 +2,6 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Loader2 } from 'lucide-react';
 import { GoogleIcon } from '@/components/ui/Icon';
 
 interface RadarSearchBarProps {
@@ -59,7 +58,7 @@ export function RadarSearchBar({
     <div className="w-full">
       <form onSubmit={handleSubmit} className="relative">
         <div className="relative flex h-14 w-full items-center rounded-2xl border-2 border-stone-200 bg-white shadow-card transition-all focus-within:border-emerald-600 focus-within:ring-4 focus-within:ring-emerald-600/10">
-          <Search className="ml-4 h-5 w-5 shrink-0 text-primary-400" />
+          <GoogleIcon name="search" size={20} className="ml-4 shrink-0 text-primary-400" />
           <input
             type="text"
             value={query}
@@ -74,11 +73,11 @@ export function RadarSearchBar({
           >
             {isLoading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <GoogleIcon name="progress_activity" size={16} className="animate-spin" />
                 <span className="hidden sm:inline">Membandingkan...</span>
               </>
             ) : (
-              <span>Search</span>
+              <span>Cari Harga</span>
             )}
           </button>
         </div>

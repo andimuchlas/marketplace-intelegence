@@ -1,6 +1,5 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
 import { GoogleIcon } from '@/components/ui/Icon';
 import { TRENDING_PRODUCTS, TrendingProductItem } from '@/data/radar/trendingProducts';
 import { formatRupiah } from '@/lib/formatting/currency';
@@ -56,7 +55,7 @@ export function CuratedTrendingGrid({ onSelectProduct }: CuratedTrendingGridProp
                 </div>
               </div>
               <span className="flex items-center text-xs font-semibold text-emerald-700 group-hover:translate-x-0.5 transition-transform">
-                Bandingkan <ArrowRight className="ml-1 h-3 w-3" />
+                Bandingkan <GoogleIcon name="arrow_forward" size={13} className="ml-1" />
               </span>
             </div>
           </button>

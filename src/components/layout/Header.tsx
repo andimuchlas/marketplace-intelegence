@@ -3,7 +3,6 @@
 import { Suspense, useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Calculator, ArrowLeftRight, FileText, Radar, Search } from 'lucide-react';
 import { GoogleIcon } from '@/components/ui/Icon';
 
 function HeaderSearchInput() {
@@ -26,7 +25,7 @@ function HeaderSearchInput() {
   return (
     <form onSubmit={handleSubmit} className="flex-1 max-w-md mx-2 sm:mx-6">
       <div className="relative flex items-center h-10 w-full rounded-xl border border-stone-300 bg-stone-50 transition-all focus-within:border-emerald-600 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-600/10">
-        <Search className="ml-3 h-4 w-4 text-stone-400 shrink-0" />
+        <GoogleIcon name="search" size={16} className="ml-3 text-stone-400 shrink-0" />
         <input
           type="text"
           value={query}
@@ -122,7 +121,7 @@ export function Header() {
                 href="/"
                 className="hidden sm:inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900"
               >
-                <Radar className="h-3.5 w-3.5 text-emerald-600" />
+                <GoogleIcon name="radar" size={15} className="text-emerald-600" />
                 <span>Beranda Radar</span>
               </Link>
             </nav>
@@ -137,7 +136,7 @@ export function Header() {
                     : 'text-primary-600 hover:bg-stone-100 hover:text-primary-900'
                 }`}
               >
-                <Calculator className="h-3.5 w-3.5 text-primary-500" />
+                <GoogleIcon name="calculate" size={15} className="text-primary-500" />
                 <span>Kalkulator</span>
               </Link>
               <Link
@@ -148,7 +147,7 @@ export function Header() {
                     : 'text-primary-600 hover:bg-stone-100 hover:text-primary-900'
                 }`}
               >
-                <ArrowLeftRight className="h-3.5 w-3.5 text-primary-500" />
+                <GoogleIcon name="compare_arrows" size={15} className="text-primary-500" />
                 <span>Bandingkan</span>
               </Link>
               <Link
@@ -159,7 +158,7 @@ export function Header() {
                     : 'text-primary-600 hover:bg-stone-100 hover:text-primary-900'
                 }`}
               >
-                <FileText className="h-3.5 w-3.5 text-primary-500" />
+                <GoogleIcon name="description" size={15} className="text-primary-500" />
                 <span>Panduan Biaya</span>
               </Link>
             </nav>
@@ -170,7 +169,7 @@ export function Header() {
                 href="/"
                 className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-emerald-800 transition-colors hover:bg-emerald-50 hover:text-emerald-900"
               >
-                <Radar className="h-3.5 w-3.5 text-emerald-600" />
+                <GoogleIcon name="radar" size={15} className="text-emerald-600" />
                 <span>Radar Harga</span>
               </Link>
             </nav>

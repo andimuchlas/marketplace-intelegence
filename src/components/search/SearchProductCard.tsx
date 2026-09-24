@@ -1,6 +1,6 @@
 'use client';
 
-import { ExternalLink, Star, ShieldCheck, MapPin, Award } from 'lucide-react';
+import { GoogleIcon } from '@/components/ui/Icon';
 import { MarketplaceProductOffer } from '@/domain/radar/types';
 import { formatRupiah } from '@/lib/formatting/currency';
 import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
@@ -18,6 +18,7 @@ export function SearchProductCard({ offer, query }: SearchProductCardProps) {
   )}&targetUrl=${encodeURIComponent(offer.affiliateUrl)}`;
 
   const hasDiscount = offer.originalPrice > offer.currentPrice && (offer.discountPercentage ?? 0) > 0;
+  const formattedRating = Number(offer.rating || 4.8).toFixed(1);
 
   return (
     <div
@@ -43,7 +44,7 @@ export function SearchProductCard({ offer, query }: SearchProductCardProps) {
             {/* Termurah / Paling Murah Winner Badge */}
             {offer.isLowestPrice && (
               <span className="inline-flex items-center gap-1 rounded bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
-                <Award className="h-3 w-3" />
+                <GoogleIcon name="emoji_events" size={12} filled className="text-white" />
                 <span>Paling Murah</span>
               </span>
             )}
@@ -51,7 +52,7 @@ export function SearchProductCard({ offer, query }: SearchProductCardProps) {
             {/* Official Store Badge */}
             {offer.isOfficialStore && (
               <span className="inline-flex items-center gap-1 rounded bg-stone-900/85 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-xs backdrop-blur-xs">
-                <ShieldCheck className="h-2.5 w-2.5 text-emerald-400" />
+                <GoogleIcon name="verified" size={11} filled className="text-emerald-400" />
                 <span>Mall / Resmi</span>
               </span>
             )}
@@ -87,7 +88,7 @@ export function SearchProductCard({ offer, query }: SearchProductCardProps) {
                 <span className="font-mono text-stone-400 line-through tabular-nums">
                   {formatRupiah(offer.originalPrice)}
                 </span>
-                <span className="rounded bg-rose-50 px-1 py-0.2 font-mono text-[10px] font-bold text-rose-600">
+                <span className="rounded bg-rose-50 border border-rose-100 px-1 py-0.2 font-mono text-[10px] font-bold text-rose-600">
                   -{offer.discountPercentage}%
                 </span>
               </div>
@@ -97,8 +98,8 @@ export function SearchProductCard({ offer, query }: SearchProductCardProps) {
           {/* Social Proof (Rating & Sold) */}
           <div className="mt-2 flex items-center gap-2 text-[11px]">
             <span className="inline-flex items-center gap-0.5 font-semibold text-amber-600">
-              <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-              <span>{offer.rating}</span>
+              <GoogleIcon name="star" size={13} filled className="text-amber-500" />
+              <span>{formattedRating}</span>
             </span>
             <span className="text-stone-300">•</span>
             <span className="font-mono text-stone-500 tabular-nums">
@@ -115,7 +116,7 @@ export function SearchProductCard({ offer, query }: SearchProductCardProps) {
             </span>
             {offer.shopCity && (
               <span className="inline-flex items-center gap-0.5 text-stone-400 truncate shrink-0">
-                <MapPin className="h-2.5 w-2.5" />
+                <GoogleIcon name="location_on" size={11} className="text-stone-400" />
                 <span className="truncate max-w-[80px]">{offer.shopCity}</span>
               </span>
             )}
@@ -129,14 +130,14 @@ export function SearchProductCard({ offer, query }: SearchProductCardProps) {
           href={clickTrackingUrl}
           target="_blank"
           rel="noopener noreferrer nofollow sponsored"
-          className={`inline-flex w-full items-center justify-center gap-1.5 rounded-lg py-2 px-3 text-xs font-semibold shadow-2xs transition-all active:scale-95 ${
+          className={`inline-flex w-full items-center justify-center gap-1.5 rounded-lg py-2 px-3 text-xs font-semibold shadow-2xs transition-all active:scale-[0.98] ${
             offer.isLowestPrice
               ? 'bg-emerald-700 text-white hover:bg-emerald-800 shadow-subtle'
               : 'border border-stone-300 bg-white text-stone-800 hover:border-emerald-600 hover:text-emerald-800'
           }`}
         >
           <span>Beli di {offer.marketplaceName}</span>
-          <ExternalLink className="h-3 w-3" />
+          <GoogleIcon name="open_in_new" size={13} />
         </a>
       </div>
     </div>

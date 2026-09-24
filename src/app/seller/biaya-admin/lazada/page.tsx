@@ -39,9 +39,9 @@ export default function LazadaFeePage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Lazada', url: 'https://kalkulatormarketplace.id/seller/biaya-admin/lazada' },
-          { name: 'Skema Biaya Komisi', url: 'https://kalkulatormarketplace.id/seller/biaya-admin/lazada' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Lazada', url: 'https://www.radarharga.shop/seller/biaya-admin/lazada' },
+          { name: 'Skema Biaya Komisi', url: 'https://www.radarharga.shop/seller/biaya-admin/lazada' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

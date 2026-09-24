@@ -1,10 +1,10 @@
 export const siteConfig = {
-  name: 'Marketplace Intelligence Indonesia',
-  shortName: 'MarketplaceIntel',
-  tagline: 'Smarter Prices. Higher Margins.',
+  name: 'Radar Harga',
+  shortName: 'RadarHarga',
+  tagline: 'Cek & Bandingkan Harga Marketplace Termurah',
   description:
-    'Smarter Prices. Higher Margins. Platform perbandingan harga live multi-marketplace (Shopee, Tokopedia, TikTok Shop, Lazada) dan kalkulator margin profit UMKM Indonesia.',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://kalkulatormarketplace.id',
+    'Bandingkan harga barang live di Shopee, Tokopedia, TikTok Shop & Lazada. Cari toko termurah, cek selisih diskon, dan hemat belanja online.',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.radarharga.shop',
   ogImage: '/og-image.png',
   author: 'Marketplace Intelligence Team',
   disclaimer:

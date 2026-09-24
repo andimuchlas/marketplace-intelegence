@@ -5,9 +5,9 @@ import { AdSlot } from '@/components/ads/AdSlot';
 import { GoogleIcon } from '@/components/ui/Icon';
 
 export const metadata: Metadata = {
-  title: 'Radar Harga Marketplace: Bandingkan Harga Shopee, Tokopedia, TikTok, Lazada',
+  title: 'Radar Harga Marketplace: Bandingkan Harga Termurah',
   description:
-    'Bandingkan harga barang secara live di Shopee, Tokopedia, TikTok Shop, dan Lazada. Temukan toko dengan harga termurah, selisih diskon, dan hemat belanja online secara instan.',
+    'Bandingkan harga barang live di Shopee, Tokopedia, TikTok Shop & Lazada. Cari toko termurah, cek selisih diskon, dan hemat belanja online.',
   keywords: [
     'radar harga marketplace',
     'bandingkan harga shopee tokopedia',
@@ -17,13 +17,13 @@ export const metadata: Metadata = {
     'alat cek harga e-commerce indonesia',
   ],
   alternates: {
-    canonical: 'https://kalkulatormarketplace.id/radar-harga',
+    canonical: 'https://www.radarharga.shop/radar-harga',
   },
   openGraph: {
-    title: 'Radar Harga Marketplace: Bandingkan Harga Shopee, Tokopedia, TikTok, Lazada',
+    title: 'Radar Harga Marketplace: Bandingkan Harga Termurah',
     description:
-      'Bandingkan harga barang secara live di marketplace terbesar Indonesia. Temukan toko termurah dalam hitungan detik.',
-    url: 'https://kalkulatormarketplace.id/radar-harga',
+      'Bandingkan harga barang live di Shopee, Tokopedia, TikTok Shop & Lazada. Cari toko termurah, cek selisih diskon, dan hemat belanja online.',
+    url: 'https://www.radarharga.shop/radar-harga',
     type: 'website',
   },
 };

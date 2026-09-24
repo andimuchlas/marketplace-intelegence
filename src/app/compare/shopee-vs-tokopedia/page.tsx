@@ -34,9 +34,9 @@ export default function ShopeeVsTokopediaPage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Bandingkan', url: 'https://kalkulatormarketplace.id/compare' },
-          { name: 'Shopee vs Tokopedia', url: 'https://kalkulatormarketplace.id/compare/shopee-vs-tokopedia' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Bandingkan', url: 'https://www.radarharga.shop/compare' },
+          { name: 'Shopee vs Tokopedia', url: 'https://www.radarharga.shop/compare/shopee-vs-tokopedia' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

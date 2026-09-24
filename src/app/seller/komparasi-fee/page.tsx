@@ -34,8 +34,8 @@ export default function CompareLandingPage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Bandingkan Marketplace', url: 'https://kalkulatormarketplace.id/seller/komparasi-fee' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Bandingkan Marketplace', url: 'https://www.radarharga.shop/seller/komparasi-fee' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

@@ -46,9 +46,9 @@ export function InfiniteLogoSlider({ className = '' }: { className?: string }) {
     <div className={`w-full py-4 sm:py-6 overflow-hidden ${className}`}>
       {/* Header Label - Clean title only without extra sub-text or tags */}
       <div className="text-center mb-5 sm:mb-6">
-        <h3 className="font-display text-xs font-bold uppercase tracking-widest text-stone-600 sm:text-[13px]">
+        <h2 className="font-display text-xs font-bold uppercase tracking-widest text-stone-600 sm:text-[13px]">
           Official Affiliate Partners
-        </h3>
+        </h2>
       </div>
 
       {/* Seamless Marquee Track with Soft Edge Fade Masks */}

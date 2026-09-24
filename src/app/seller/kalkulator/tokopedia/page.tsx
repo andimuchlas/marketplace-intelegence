@@ -40,13 +40,13 @@ export default function TokopediaProfitCalculatorPage() {
       <SoftwareApplicationJsonLd
         name="Kalkulator Profit Tokopedia Indonesia"
         description="Kalkulator komisi admin, margin bersih, dan break-even penjual Tokopedia."
-        url="https://kalkulatormarketplace.id/seller/kalkulator/tokopedia"
+        url="https://www.radarharga.shop/seller/kalkulator/tokopedia"
       />
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Tokopedia', url: 'https://kalkulatormarketplace.id/seller/biaya-admin/tokopedia' },
-          { name: 'Kalkulator Profit', url: 'https://kalkulatormarketplace.id/seller/kalkulator/tokopedia' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Tokopedia', url: 'https://www.radarharga.shop/seller/biaya-admin/tokopedia' },
+          { name: 'Kalkulator Profit', url: 'https://www.radarharga.shop/seller/kalkulator/tokopedia' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

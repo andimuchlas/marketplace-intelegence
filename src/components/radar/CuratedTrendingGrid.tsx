@@ -13,10 +13,10 @@ export function CuratedTrendingGrid({ onSelectProduct }: CuratedTrendingGridProp
     <div className="w-full">
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary-500">
+          <h2 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary-500">
             <GoogleIcon name="local_fire_department" size={16} className="text-amber-500" />
             Produk Terpopuler Minggu Ini
-          </div>
+          </h2>
           <p className="mt-0.5 text-xs text-primary-500">
             Klik salah satu produk untuk membandingkan harga langsung di 4 marketplace.
           </p>
@@ -42,9 +42,9 @@ export function CuratedTrendingGrid({ onSelectProduct }: CuratedTrendingGridProp
                 </span>
               </div>
 
-              <h4 className="mt-2.5 font-display text-xs font-bold leading-snug text-primary-900 group-hover:text-emerald-700 transition-colors line-clamp-2">
+              <p className="mt-2.5 font-display text-xs font-bold leading-snug text-primary-900 group-hover:text-emerald-700 transition-colors line-clamp-2">
                 {item.name}
-              </h4>
+              </p>
             </div>
 
             <div className="mt-3 flex items-center justify-between border-t border-stone-100 pt-2.5">

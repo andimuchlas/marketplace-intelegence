@@ -34,9 +34,9 @@ export default function ShopeeVsTikTokShopPage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Bandingkan', url: 'https://kalkulatormarketplace.id/compare' },
-          { name: 'Shopee vs TikTok Shop', url: 'https://kalkulatormarketplace.id/compare/shopee-vs-tiktok-shop' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Bandingkan', url: 'https://www.radarharga.shop/compare' },
+          { name: 'Shopee vs TikTok Shop', url: 'https://www.radarharga.shop/compare/shopee-vs-tiktok-shop' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

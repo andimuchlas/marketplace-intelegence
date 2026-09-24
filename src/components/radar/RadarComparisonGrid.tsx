@@ -152,12 +152,12 @@ function OfferCard({ offer, query }: { offer: MarketplaceProductOffer; query: st
         </div>
 
         {/* Product Title */}
-        <h3
+        <p
           className="mt-3 font-display text-sm font-semibold leading-snug text-primary-900 line-clamp-2"
           title={offer.title}
         >
           {offer.title}
-        </h3>
+        </p>
 
         {/* Price Tag */}
         <div className="mt-3">

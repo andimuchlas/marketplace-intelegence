@@ -5,9 +5,9 @@ import { AdSlot } from '@/components/ads/AdSlot';
 import { GoogleIcon } from '@/components/ui/Icon';
 
 export const metadata: Metadata = {
-  title: 'Marketplace Intelligence: Bandingkan Harga Shopee, Tokopedia, TikTok, Lazada',
+  title: 'Radar Harga: Bandingkan Harga Shopee, Tokopedia, TikTok',
   description:
-    'Bandingkan harga barang secara live di Shopee, Tokopedia, TikTok Shop, dan Lazada. Temukan toko dengan harga termurah, selisih diskon, dan hemat belanja online secara instan.',
+    'Bandingkan harga barang live di Shopee, Tokopedia, TikTok Shop & Lazada. Cari toko termurah, cek selisih diskon, dan hemat belanja online.',
   keywords: [
     'radar harga marketplace',
     'bandingkan harga shopee tokopedia',
@@ -17,13 +17,13 @@ export const metadata: Metadata = {
     'alat cek harga e-commerce indonesia',
   ],
   alternates: {
-    canonical: 'https://kalkulatormarketplace.id',
+    canonical: 'https://www.radarharga.shop',
   },
   openGraph: {
-    title: 'Marketplace Intelligence: Bandingkan Harga Shopee, Tokopedia, TikTok, Lazada Termurah',
+    title: 'Radar Harga: Bandingkan Harga Shopee, Tokopedia, TikTok',
     description:
-      'Bandingkan harga barang secara live di marketplace terbesar Indonesia. Temukan toko termurah dalam hitungan detik.',
-    url: 'https://kalkulatormarketplace.id',
+      'Bandingkan harga barang live di Shopee, Tokopedia, TikTok Shop & Lazada. Cari toko termurah, cek selisih diskon, dan hemat belanja online.',
+    url: 'https://www.radarharga.shop',
     type: 'website',
   },
 };
@@ -34,34 +34,58 @@ export default async function HomePage() {
   // Pre-fetch initial benchmark result on server for instantaneous first load & SEO
   const initialResult = await radarAggregator.search(DEFAULT_QUERY);
 
-  // JSON-LD Structured Data for Search Engines
+  // JSON-LD Structured Data with Organization & WebSite Identity for SEO & GEO
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: 'Radar Harga Marketplace Indonesia',
-    description:
-      'Alat pembanding harga e-commerce independen untuk mencari harga termurah di Shopee, Tokopedia, TikTok Shop, dan Lazada.',
-    mainEntity: {
-      '@type': 'FAQPage',
-      mainEntity: [
-        {
-          '@type': 'Question',
-          name: 'Bagaimana cara kerja perbandingan harga ini?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: 'Sistem mengumpulkan katalog penawaran harga dari Shopee, Tokopedia, TikTok Shop, dan Lazada secara terpadu dan mengurutkannya dari yang paling hemat.',
-          },
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://www.radarharga.shop/#organization',
+        name: 'Radar Harga',
+        url: 'https://www.radarharga.shop',
+        logo: 'https://www.radarharga.shop/logo.png',
+        sameAs: [],
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://www.radarharga.shop/#website',
+        url: 'https://www.radarharga.shop',
+        name: 'Radar Harga',
+        description:
+          'Bandingkan harga barang live di Shopee, Tokopedia, TikTok Shop & Lazada.',
+        publisher: { '@id': 'https://www.radarharga.shop/#organization' },
+      },
+      {
+        '@type': 'WebPage',
+        '@id': 'https://www.radarharga.shop/#webpage',
+        url: 'https://www.radarharga.shop',
+        name: 'Radar Harga: Bandingkan Harga Shopee, Tokopedia, TikTok',
+        isPartOf: { '@id': 'https://www.radarharga.shop/#website' },
+        description:
+          'Bandingkan harga barang live di Shopee, Tokopedia, TikTok Shop & Lazada. Cari toko termurah, cek selisih diskon, dan hemat belanja online.',
+        mainEntity: {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'Bagaimana cara kerja perbandingan harga ini?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Sistem mengumpulkan katalog penawaran harga dari Shopee, Tokopedia, TikTok Shop, dan Lazada secara terpadu dan mengurutkannya dari yang paling hemat.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'Mengapa harga produk bisa berbeda antar marketplace?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Setiap marketplace memiliki struktur biaya komisi admin, program subsidi gratis ongkir, dan promo flash deal yang berbeda-beda, sehingga penjual sering menyesuaikan harga jual untuk menjaga margin keuntungan.',
+              },
+            },
+          ],
         },
-        {
-          '@type': 'Question',
-          name: 'Mengapa harga produk bisa berbeda antar marketplace?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: 'Setiap marketplace memiliki struktur biaya komisi admin, program subsidi gratis ongkir, dan promo flash deal yang berbeda-beda, sehingga penjual sering menyesuaikan harga jual untuk menjaga margin keuntungan.',
-          },
-        },
-      ],
-    },
+      },
+    ],
   };
 
   return (
@@ -155,34 +179,34 @@ export default async function HomePage() {
               <div className="mt-10">
                 <div className="flex items-center gap-2">
                   <GoogleIcon name="help" size={16} filled className="text-primary-500" />
-                  <h3 className="font-display text-base font-bold text-primary-900">
+                  <h2 className="font-display text-base font-bold text-primary-900">
                     Pertanyaan yang Sering Diajukan (FAQ)
-                  </h3>
+                  </h2>
                 </div>
 
                 <div className="mt-4 space-y-3">
                   <div className="rounded-xl border border-stone-200 bg-white p-4">
-                    <h4 className="text-xs font-bold text-primary-900">
+                    <h3 className="text-xs font-bold text-primary-900">
                       Apakah harga yang tertera sudah termasuk biaya ongkos kirim?
-                    </h4>
+                    </h3>
                     <p className="mt-1 text-xs text-primary-600 leading-relaxed">
                       Harga yang tertera adalah harga dasar produk di masing-masing platform. Biaya ongkir aktual dapat bervariasi tergantung lokasi alamat Anda, voucher Gratis Ongkir yang Anda miliki di akun masing-masing aplikasi, serta ekspedisi logistik yang dipilih.
                     </p>
                   </div>
 
                   <div className="rounded-xl border border-stone-200 bg-white p-4">
-                    <h4 className="text-xs font-bold text-primary-900">
+                    <h3 className="text-xs font-bold text-primary-900">
                       Mengapa produk di TikTok Shop kadang lebih murah dari Tokopedia?
-                    </h4>
+                    </h3>
                     <p className="mt-1 text-xs text-primary-600 leading-relaxed">
                       TikTok Shop sering memberikan subsidi diskon promosi streaming live atau komisi kreator khusus untuk mendongkrak penjualan cepat, sementara Tokopedia sering unggul pada ketersediaan voucher cashback dan gratis ongkir instan perkotaan.
                     </p>
                   </div>
 
                   <div className="rounded-xl border border-stone-200 bg-white p-4">
-                    <h4 className="text-xs font-bold text-primary-900">
+                    <h3 className="text-xs font-bold text-primary-900">
                       Bagaimana cara mendapatkan harga termurah yang ditampilkan?
-                    </h4>
+                    </h3>
                     <p className="mt-1 text-xs text-primary-600 leading-relaxed">
                       Cukup klik tombol &quot;Beli di [Marketplace]&quot; pada kartu yang memiliki label &quot;Paling Termurah&quot;. Anda akan langsung diarahkan ke halaman produk resmi pada aplikasi marketplace terkait untuk menyelesaikan transaksi dengan aman.
                     </p>

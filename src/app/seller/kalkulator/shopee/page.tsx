@@ -40,13 +40,13 @@ export default function ShopeeProfitCalculatorPage() {
       <SoftwareApplicationJsonLd
         name="Kalkulator Profit Shopee Indonesia"
         description="Kalkulator komisi admin, margin bersih, dan break-even penjual Shopee."
-        url="https://kalkulatormarketplace.id/seller/kalkulator/shopee"
+        url="https://www.radarharga.shop/seller/kalkulator/shopee"
       />
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Shopee', url: 'https://kalkulatormarketplace.id/seller/biaya-admin/shopee' },
-          { name: 'Kalkulator Profit', url: 'https://kalkulatormarketplace.id/seller/kalkulator/shopee' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Shopee', url: 'https://www.radarharga.shop/seller/biaya-admin/shopee' },
+          { name: 'Kalkulator Profit', url: 'https://www.radarharga.shop/seller/kalkulator/shopee' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

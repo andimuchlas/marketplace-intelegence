@@ -40,13 +40,13 @@ export default function TikTokShopProfitCalculatorPage() {
       <SoftwareApplicationJsonLd
         name="Kalkulator Profit TikTok Shop Indonesia"
         description="Kalkulator komisi admin, komisi affiliate kreator, dan margin penjual TikTok Shop."
-        url="https://kalkulatormarketplace.id/tiktok-shop-profit-calculator"
+        url="https://www.radarharga.shop/tiktok-shop-profit-calculator"
       />
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'TikTok Shop', url: 'https://kalkulatormarketplace.id/tiktok-shop-fee' },
-          { name: 'Kalkulator Profit', url: 'https://kalkulatormarketplace.id/tiktok-shop-profit-calculator' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'TikTok Shop', url: 'https://www.radarharga.shop/tiktok-shop-fee' },
+          { name: 'Kalkulator Profit', url: 'https://www.radarharga.shop/tiktok-shop-profit-calculator' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

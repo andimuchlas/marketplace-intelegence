@@ -35,12 +35,12 @@ export default function MarketplaceCalculatorPage() {
       <SoftwareApplicationJsonLd
         name="Kalkulator Marketplace Indonesia Universal"
         description="Alat kalkulator keuntungan dan potongan biaya marketplace Indonesia."
-        url="https://kalkulatormarketplace.id/marketplace-calculator"
+        url="https://www.radarharga.shop/marketplace-calculator"
       />
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Kalkulator Marketplace', url: 'https://kalkulatormarketplace.id/marketplace-calculator' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Kalkulator Marketplace', url: 'https://www.radarharga.shop/marketplace-calculator' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

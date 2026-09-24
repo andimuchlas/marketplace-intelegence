@@ -39,9 +39,9 @@ export default function TikTokShopFeePage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'TikTok Shop', url: 'https://kalkulatormarketplace.id/tiktok-shop-fee' },
-          { name: 'Skema Biaya Komisi', url: 'https://kalkulatormarketplace.id/tiktok-shop-fee' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'TikTok Shop', url: 'https://www.radarharga.shop/tiktok-shop-fee' },
+          { name: 'Skema Biaya Komisi', url: 'https://www.radarharga.shop/tiktok-shop-fee' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

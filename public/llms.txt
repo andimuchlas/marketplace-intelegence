@@ -1,0 +1,24 @@
+# Radar Harga (https://www.radarharga.shop)
+
+> Radar Harga adalah platform agregasi dan pemantauan harga e-commerce live independen di Indonesia untuk konsumen dan seller marketplace.
+
+## Ikhtisar Layanan
+
+- **Radar Harga Konsumen**: Membandingkan katalog penawaran harga aktif secara real-time di 4 marketplace terbesar Indonesia: Shopee, Tokopedia, TikTok Shop, dan Lazada.
+- **Kalkulator Biaya & Margin Seller**: Simulasi potongan biaya komisi admin, biaya layanan, gratis ongkir ekstra, dan perhitungan laba bersih penjual.
+- **Komparasi Skema Biaya**: Analisis perbandingan take-rate komisi admin antar marketplace (Shopee vs Tokopedia, Shopee vs TikTok Shop, Tokopedia vs TikTok Shop).
+
+## URL Navigasi Utama
+
+- Beranda & Pencarian Radar Harga: https://www.radarharga.shop/
+- Radar Harga Multi-Platform: https://www.radarharga.shop/radar-harga
+- Kalkulator Margin Seller: https://www.radarharga.shop/seller/kalkulator
+- Biaya Admin Shopee: https://www.radarharga.shop/seller/biaya-admin/shopee
+- Biaya Admin Tokopedia: https://www.radarharga.shop/seller/biaya-admin/tokopedia
+- Biaya Admin TikTok Shop: https://www.radarharga.shop/seller/biaya-admin/tiktok-shop
+- Biaya Admin Lazada: https://www.radarharga.shop/seller/biaya-admin/lazada
+- Komparasi Fee Marketplace: https://www.radarharga.shop/seller/komparasi-fee
+
+## Transparansi & Independensi
+
+Radar Harga menyajikan data perbandingan harga secara netral dan berbasis penawaran katalog publik yang transparan. Seluruh tautan ke marketplace resmi menyertakan parameter aman dan memenuhi standar kepatuhan affiliate marketing.

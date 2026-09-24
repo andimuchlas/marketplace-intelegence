@@ -39,9 +39,9 @@ export default function TokopediaFeePage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Tokopedia', url: 'https://kalkulatormarketplace.id/seller/biaya-admin/tokopedia' },
-          { name: 'Skema Biaya Layanan', url: 'https://kalkulatormarketplace.id/seller/biaya-admin/tokopedia' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Tokopedia', url: 'https://www.radarharga.shop/seller/biaya-admin/tokopedia' },
+          { name: 'Skema Biaya Layanan', url: 'https://www.radarharga.shop/seller/biaya-admin/tokopedia' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

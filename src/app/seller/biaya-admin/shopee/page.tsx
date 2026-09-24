@@ -39,9 +39,9 @@ export default function ShopeeFeePage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Shopee', url: 'https://kalkulatormarketplace.id/seller/biaya-admin/shopee' },
-          { name: 'Skema Biaya Admin', url: 'https://kalkulatormarketplace.id/seller/biaya-admin/shopee' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Shopee', url: 'https://www.radarharga.shop/seller/biaya-admin/shopee' },
+          { name: 'Skema Biaya Admin', url: 'https://www.radarharga.shop/seller/biaya-admin/shopee' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

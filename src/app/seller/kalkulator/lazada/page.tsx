@@ -40,13 +40,13 @@ export default function LazadaProfitCalculatorPage() {
       <SoftwareApplicationJsonLd
         name="Kalkulator Profit Lazada Indonesia"
         description="Kalkulator komisi admin, margin bersih, dan break-even penjual Lazada."
-        url="https://kalkulatormarketplace.id/seller/kalkulator/lazada"
+        url="https://www.radarharga.shop/seller/kalkulator/lazada"
       />
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Lazada', url: 'https://kalkulatormarketplace.id/seller/biaya-admin/lazada' },
-          { name: 'Kalkulator Profit', url: 'https://kalkulatormarketplace.id/seller/kalkulator/lazada' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Lazada', url: 'https://www.radarharga.shop/seller/biaya-admin/lazada' },
+          { name: 'Kalkulator Profit', url: 'https://www.radarharga.shop/seller/kalkulator/lazada' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
-import { PromoSlide, DEFAULT_PROMOTIONS } from '@/config/promos';
+import { PromoSlide, DEFAULT_PROMOTIONS, TrustBadgeItem } from '@/config/promos';
 import { MarketplaceIcon } from '@/components/ui/MarketplaceIcon';
 import { GoogleIcon } from '@/components/ui/Icon';
 import { formatRupiah } from '@/lib/formatting/currency';
@@ -14,7 +14,7 @@ interface AffiliateCarouselProps {
 
 const slideVariants: Variants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? 240 : -240,
+    x: direction > 0 ? 180 : -180,
     opacity: 0,
     scale: 0.98,
   }),
@@ -24,22 +24,29 @@ const slideVariants: Variants = {
     opacity: 1,
     scale: 1,
     transition: {
-      x: { type: 'spring' as const, stiffness: 320, damping: 30 },
+      x: { type: 'spring', stiffness: 320, damping: 30 },
       opacity: { duration: 0.25 },
       scale: { duration: 0.25 },
     },
   },
   exit: (direction: number) => ({
     zIndex: 0,
-    x: direction < 0 ? 240 : -240,
+    x: direction < 0 ? 180 : -180,
     opacity: 0,
     scale: 0.98,
     transition: {
-      x: { type: 'spring' as const, stiffness: 320, damping: 30 },
+      x: { type: 'spring', stiffness: 320, damping: 30 },
       opacity: { duration: 0.2 },
     },
   }),
 };
+
+const DEFAULT_TRUST_BADGES: TrustBadgeItem[] = [
+  { icon: 'verified', label: 'Garansi Resmi', sublabel: 'Toko Official' },
+  { icon: 'local_shipping', label: 'Pengiriman Cepat', sublabel: 'Dari Jakarta' },
+  { icon: 'star', label: '4.8 (12rb+ ulasan)', sublabel: 'Produk Terlaris' },
+  { icon: 'sync', label: '7 Hari', sublabel: 'Mudah Return' },
+];
 
 export function AffiliateCarousel({
   initialPromos = DEFAULT_PROMOTIONS,
@@ -82,12 +89,12 @@ export function AffiliateCarousel({
     [total]
   );
 
-  // Autoplay rotation every 5.5 seconds with pause-on-hover
+  // Autoplay rotation every 6 seconds with pause-on-hover
   useEffect(() => {
     if (isPaused || total <= 1) return;
     const interval = setInterval(() => {
       paginate(1);
-    }, 5500);
+    }, 6000);
     return () => clearInterval(interval);
   }, [isPaused, paginate, total]);
 
@@ -114,34 +121,66 @@ export function AffiliateCarousel({
   if (total === 0) return null;
 
   const activePromo = promos[currentIndex] || promos[0];
+  const platformName =
+    activePromo.marketplace === 'tiktok-shop'
+      ? 'TikTok Shop'
+      : activePromo.marketplace === 'tokopedia'
+      ? 'Tokopedia'
+      : activePromo.marketplace === 'lazada'
+      ? 'Lazada'
+      : activePromo.marketplace === 'shopee'
+      ? 'Shopee'
+      : 'Marketplace';
+
+  const highlights =
+    activePromo.highlights && activePromo.highlights.length > 0
+      ? activePromo.highlights
+      : activePromo.subtitle
+      ? activePromo.subtitle.split(',').map((s) => s.trim())
+      : ['Garansi Resmi Toko', 'Harga Termurah Hari Ini', 'Stok Terbatas'];
+
+  const trustBadges = activePromo.trustBadges || DEFAULT_TRUST_BADGES;
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-card transition-all ${className}`}
+      className={`group relative overflow-hidden rounded-3xl border border-stone-200/90 bg-white p-5 sm:p-7 shadow-card transition-all ${className}`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)}
       onTouchEnd={() => setIsPaused(false)}
     >
-      {/* Top Bar Indicator */}
-      <div className="flex items-center justify-between border-b border-stone-100 bg-stone-50/80 px-4 py-2 sm:px-5">
-        <div className="flex items-center gap-2">
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-            <GoogleIcon name="auto_awesome" size={13} filled className="text-emerald-700" />
+      {/* Top Bar Indicator with Navigation */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 pb-4">
+        {/* Left: Brand Badge & Spotlight Tag */}
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 ring-4 ring-emerald-50">
+            <GoogleIcon name="radar" size={16} filled className="text-emerald-600 animate-pulse" />
           </span>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-primary-900">
-            Radar Spotlight
+          <span className="font-display text-sm font-extrabold tracking-wider text-stone-900 uppercase">
+            RADAR SPOTLIGHT
           </span>
           {activePromo.badge && (
-            <span className="rounded-full bg-emerald-50 border border-emerald-200/70 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
-              {activePromo.badge}
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 text-xs font-bold text-emerald-800">
+              <GoogleIcon name="local_offer" size={12} filled className="text-emerald-600" />
+              <span>{activePromo.badge}</span>
             </span>
           )}
         </div>
 
-        {/* Slide Counter & Dots */}
+        {/* Right: Carousel Navigation Controls */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1">
+          {/* Prev Button */}
+          <button
+            type="button"
+            onClick={() => paginate(-1)}
+            aria-label="Promo sebelumnya"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-600 shadow-2xs hover:bg-stone-50 hover:border-stone-300 transition-colors"
+          >
+            <GoogleIcon name="chevron_left" size={16} />
+          </button>
+
+          {/* Dots Indicator */}
+          <div className="flex items-center gap-1.5 mx-1">
             {promos.map((p, idx) => (
               <button
                 key={p.id}
@@ -150,22 +189,34 @@ export function AffiliateCarousel({
                   if (diff !== 0) setPage([page + diff, diff > 0 ? 1 : -1]);
                 }}
                 aria-label={`Lihat promo ke-${idx + 1}`}
-                className={`h-1.5 rounded-full transition-all ${
+                className={`h-2 rounded-full transition-all ${
                   idx === currentIndex
                     ? 'w-5 bg-emerald-600'
-                    : 'w-1.5 bg-stone-300 hover:bg-stone-400'
+                    : 'w-2 bg-stone-200 hover:bg-stone-300'
                 }`}
               />
             ))}
           </div>
-          <span className="font-mono text-[10px] text-stone-400">
+
+          {/* Next Button */}
+          <button
+            type="button"
+            onClick={() => paginate(1)}
+            aria-label="Promo berikutnya"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-600 shadow-2xs hover:bg-stone-50 hover:border-stone-300 transition-colors"
+          >
+            <GoogleIcon name="chevron_right" size={16} />
+          </button>
+
+          {/* Counter */}
+          <span className="font-mono text-xs font-medium text-stone-400 ml-1">
             {currentIndex + 1}/{total}
           </span>
         </div>
       </div>
 
       {/* Main Slide Body with Motion Transition */}
-      <div className="relative min-h-[140px] sm:min-h-[120px] overflow-hidden">
+      <div className="relative mt-5 overflow-hidden">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
             key={page}
@@ -185,155 +236,127 @@ export function AffiliateCarousel({
                 paginate(-1);
               }
             }}
-            onClick={() => handleSlideClick(activePromo)}
-            className="cursor-pointer p-4 sm:p-5 transition-colors hover:bg-stone-50/50"
+            className="flex flex-col md:flex-row items-center gap-6 sm:gap-8"
           >
-            {activePromo.type === 'campaign_banner' ? (
-              // Mode A: Campaign Banner (e.g. 10.10, WIB)
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-2">
-                    {activePromo.marketplace !== 'all' && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-2.5 py-0.5 text-[11px] font-semibold text-primary-800 shadow-2xs">
-                        <MarketplaceIcon id={activePromo.marketplace} size={14} />
-                        <span className="capitalize">
-                          {activePromo.marketplace.replace('-', ' ')}
-                        </span>
-                      </span>
-                    )}
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700">
-                      <GoogleIcon name="sell" size={13} filled className="text-emerald-600" />
-                      Promo Pilihan
-                    </span>
-                  </div>
+            {/* Left Column: Product Image with Discount Badge */}
+            <div
+              onClick={() => handleSlideClick(activePromo)}
+              className="relative aspect-square w-44 sm:w-52 md:w-56 shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-stone-200/80 bg-stone-50 shadow-md group/img"
+            >
+              <img
+                src={activePromo.imageUrl}
+                alt={activePromo.title}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover/img:scale-105"
+                loading="lazy"
+              />
+              {activePromo.discountPercent && (
+                <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-0.5 rounded-lg bg-rose-600 px-2 py-0.5 text-xs font-black text-white shadow-md">
+                  <GoogleIcon name="bolt" size={12} filled className="text-amber-300" />
+                  <span>-{activePromo.discountPercent}%</span>
+                </span>
+              )}
+            </div>
 
-                  <h2 className="font-display text-base font-bold tracking-tight text-primary-900 sm:text-lg lg:text-xl">
-                    {activePromo.title}
-                  </h2>
-
-                  {activePromo.subtitle && (
-                    <p className="text-xs text-primary-600 sm:text-sm line-clamp-2">
-                      {activePromo.subtitle}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex shrink-0 items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0">
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-primary-900 px-4 py-2.5 text-xs font-semibold text-white shadow-2xs transition-transform group-hover:scale-[1.02] active:scale-95 sm:text-sm"
-                  >
-                    <span>{activePromo.ctaText}</span>
-                    <GoogleIcon name="arrow_outward" size={15} />
-                  </button>
-                </div>
+            {/* Right Column: Details, Highlights, Prices, and CTA */}
+            <div className="flex-1 min-w-0 w-full">
+              {/* Row 1: Marketplace & Status Pills */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 py-1 text-xs font-bold text-stone-800 shadow-2xs">
+                  <MarketplaceIcon id={activePromo.marketplace} size={14} />
+                  <span className="capitalize">{platformName}</span>
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800">
+                  <GoogleIcon name="trending_up" size={14} className="text-emerald-600" />
+                  <span>Penawaran Terbaik</span>
+                </span>
               </div>
-            ) : (
-              // Mode B: Curated Product Spotlight (Price Drop Deal)
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                {/* Product Image */}
-                <div className="relative h-20 w-20 sm:h-24 sm:w-24 shrink-0 overflow-hidden rounded-xl border border-stone-200 bg-stone-100">
-                  <img
-                    src={activePromo.imageUrl}
-                    alt={activePromo.title}
-                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                    loading="lazy"
-                  />
+
+              {/* Row 2: Product Title */}
+              <h2
+                onClick={() => handleSlideClick(activePromo)}
+                className="mt-2.5 font-display text-lg sm:text-xl md:text-2xl font-extrabold text-stone-900 tracking-tight leading-snug line-clamp-2 cursor-pointer hover:text-emerald-700 transition-colors"
+              >
+                {activePromo.title}
+              </h2>
+
+              {/* Row 3: Highlight Bullet Features */}
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-stone-600">
+                {highlights.map((feat, idx) => (
+                  <React.Fragment key={idx}>
+                    {idx > 0 && <span className="text-stone-300 select-none">|</span>}
+                    <span className="inline-flex items-center gap-1">
+                      <GoogleIcon
+                        name={idx === 0 ? 'verified' : idx === 1 ? 'local_shipping' : 'bolt'}
+                        size={14}
+                        filled
+                        className="text-emerald-600"
+                      />
+                      <span>{feat}</span>
+                    </span>
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Row 4: Pricing & Action Button */}
+              <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                {/* Price Line */}
+                <div className="flex flex-wrap items-baseline gap-2.5">
+                  <span className="font-display text-2xl sm:text-3xl font-extrabold text-emerald-700 tabular-nums">
+                    {formatRupiah(activePromo.dealPrice || 312000)}
+                  </span>
+                  {activePromo.originalPrice && (
+                    <span className="font-mono text-sm sm:text-base font-medium text-stone-400 line-through tabular-nums">
+                      {formatRupiah(activePromo.originalPrice)}
+                    </span>
+                  )}
                   {activePromo.discountPercent && (
-                    <span className="absolute left-1 top-1 rounded-md bg-rose-600 px-1.5 py-0.5 font-mono text-[10px] font-bold text-white shadow-xs">
-                      -{activePromo.discountPercent}%
+                    <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 border border-rose-200/80 px-2 py-0.5 text-xs font-bold text-rose-600">
+                      <GoogleIcon name="local_offer" size={11} filled />
+                      <span>Diskon {activePromo.discountPercent}%</span>
                     </span>
                   )}
                 </div>
 
-                {/* Product Details */}
-                <div className="flex-1 min-w-0 space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-primary-800 shadow-2xs">
-                      <MarketplaceIcon id={activePromo.marketplace} size={12} />
-                      <span className="capitalize">
-                        {activePromo.marketplace.replace('-', ' ')}
-                      </span>
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
-                      <GoogleIcon name="trending_down" size={13} className="text-emerald-600" />
-                      Penawaran Terbaik
-                    </span>
+                {/* Direct Affiliate CTA Button */}
+                <div className="relative inline-flex items-center">
+                  {/* Subtle celebratory sunburst icon top-right */}
+                  <div className="absolute -top-3 -right-2 flex items-center justify-center text-emerald-500 font-bold select-none pointer-events-none opacity-90 animate-pulse">
+                    <GoogleIcon name="auto_awesome" size={16} filled className="text-emerald-500" />
                   </div>
 
-                  <h2 className="font-display text-sm font-bold text-primary-900 sm:text-base truncate">
-                    {activePromo.title}
-                  </h2>
-
-                  {activePromo.subtitle && (
-                    <p className="text-xs text-primary-500 line-clamp-1">
-                      {activePromo.subtitle}
-                    </p>
-                  )}
-
-                  {/* Price Row */}
-                  <div className="flex items-baseline gap-2 pt-0.5">
-                    {activePromo.dealPrice && (
-                      <span className="font-display text-base font-extrabold text-emerald-700 sm:text-lg">
-                        {formatRupiah(activePromo.dealPrice)}
-                      </span>
-                    )}
-                    {activePromo.originalPrice && (
-                      <span className="text-xs text-stone-400 line-through">
-                        {formatRupiah(activePromo.originalPrice)}
-                      </span>
-                    )}
-                    {activePromo.discountPercent && (
-                      <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-700 border border-rose-200/60">
-                        Diskon {activePromo.discountPercent}%
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* CTA Button */}
-                <div className="w-full sm:w-auto shrink-0 pt-2 sm:pt-0">
                   <button
                     type="button"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-4 py-2.5 text-xs font-semibold text-white shadow-2xs transition-all hover:bg-emerald-800 active:scale-95"
+                    onClick={() => handleSlideClick(activePromo)}
+                    className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-6 sm:px-7 py-3 text-sm shadow-md transition-all hover:scale-[1.02] active:scale-98"
                   >
-                    <span>{activePromo.ctaText}</span>
-                    <GoogleIcon name="arrow_outward" size={15} />
+                    <span>{activePromo.ctaText || `Cek di ${platformName}`}</span>
+                    <GoogleIcon name="arrow_outward" size={16} />
                   </button>
                 </div>
               </div>
-            )}
+
+              {/* Row 5: Trust Badges Bar */}
+              <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 rounded-2xl bg-stone-50/90 border border-stone-200/70 p-2.5 sm:p-3 text-xs">
+                {trustBadges.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white border border-stone-200/80 text-emerald-600 shadow-2xs">
+                      <GoogleIcon name={item.icon} size={15} filled />
+                    </span>
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-bold text-stone-800 text-[11px] truncate">
+                        {item.label}
+                      </span>
+                      <span className="text-[10px] text-stone-600 truncate">
+                        {item.sublabel}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>
-
-      {/* Manual Prev / Next Buttons */}
-      {total > 1 && (
-        <>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              paginate(-1);
-            }}
-            aria-label="Slide sebelumnya"
-            className="absolute left-2 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full border border-stone-200 bg-white/90 text-primary-700 opacity-0 shadow-xs backdrop-blur-xs transition-all hover:bg-white hover:text-black group-hover:opacity-100"
-          >
-            <GoogleIcon name="chevron_left" size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              paginate(1);
-            }}
-            aria-label="Slide berikutnya"
-            className="absolute right-2 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full border border-stone-200 bg-white/90 text-primary-700 opacity-0 shadow-xs backdrop-blur-xs transition-all hover:bg-white hover:text-black group-hover:opacity-100"
-          >
-            <GoogleIcon name="chevron_right" size={16} />
-          </button>
-        </>
-      )}
     </div>
   );
 }

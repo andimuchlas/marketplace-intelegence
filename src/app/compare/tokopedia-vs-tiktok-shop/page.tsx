@@ -34,9 +34,9 @@ export default function TokopediaVsTikTokShopPage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: 'Beranda', url: 'https://kalkulatormarketplace.id' },
-          { name: 'Bandingkan', url: 'https://kalkulatormarketplace.id/compare' },
-          { name: 'Tokopedia vs TikTok Shop', url: 'https://kalkulatormarketplace.id/compare/tokopedia-vs-tiktok-shop' },
+          { name: 'Beranda', url: 'https://www.radarharga.shop' },
+          { name: 'Bandingkan', url: 'https://www.radarharga.shop/compare' },
+          { name: 'Tokopedia vs TikTok Shop', url: 'https://www.radarharga.shop/compare/tokopedia-vs-tiktok-shop' },
         ]}
       />
       <FaqPageJsonLd items={faqItems} />

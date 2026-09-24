@@ -17,12 +17,12 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
     title: `Cari & Bandingkan Harga "${query}" Termurah | MarketplaceIntel`,
     description: `Bandingkan harga "${query}" secara live di Shopee, Tokopedia, TikTok Shop, dan Lazada. Dapatkan penawaran terbaik dan hemat belanja online seketika.`,
     alternates: {
-      canonical: `https://kalkulatormarketplace.id/search?q=${encodeURIComponent(query)}`,
+      canonical: `https://www.radarharga.shop/search?q=${encodeURIComponent(query)}`,
     },
     openGraph: {
       title: `Harga "${query}" Termurah di Marketplace Indonesia`,
       description: `Bandingkan penawaran "${query}" di Shopee, Tokopedia, TikTok Shop, dan Lazada. Cek selisih harga dan hemat sekarang.`,
-      url: `https://kalkulatormarketplace.id/search?q=${encodeURIComponent(query)}`,
+      url: `https://www.radarharga.shop/search?q=${encodeURIComponent(query)}`,
       type: 'website',
     },
   };

@@ -189,6 +189,11 @@ export default async function HomePage() {
                   </div>
                 </div>
               </div>
+
+              {/* Bottom Banner Ad Zone */}
+              <div className="mt-12 flex justify-center">
+                <AdSlot position="bottom" />
+              </div>
             </div>
           </div>
         </div>

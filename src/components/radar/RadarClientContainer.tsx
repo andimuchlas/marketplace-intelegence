@@ -7,6 +7,7 @@ import { RadarSearchBar } from './RadarSearchBar';
 import { RadarComparisonGrid } from './RadarComparisonGrid';
 import { RadarDisclaimerBox } from './RadarDisclaimerBox';
 import { CuratedTrendingGrid } from './CuratedTrendingGrid';
+import { AffiliateCarousel } from '@/components/home/AffiliateCarousel';
 import { AlertCircle, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -62,6 +63,9 @@ export function RadarClientContainer({
         onSearch={handleSearch}
         isLoading={isLoading}
       />
+
+      {/* Affiliate Promo & Spotlight Deals Carousel */}
+      <AffiliateCarousel />
 
       {/* Error / Rate Limit Alert */}
       {error && (

@@ -38,11 +38,18 @@
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 1.3 Naming Architecture
+### 1.3 Naming Architecture & Tagline
 * **Formal Entity Name:** `Marketplace Intelligence Indonesia`
 * **Short Brand Mark:** `MarketplaceIntel`
+* **Official Brand Tagline:** `"Smarter Prices. Higher Margins."`
 * **Consumer Sub-Brand:** `Radar Harga Indonesia` (`/` & `/search`)
 * **Merchant Sub-Brand:** `Portal Penjual` / `Kalkulator Marketplace` (`/seller/*`)
+
+### 1.4 Core Brand Pillars (Identitas Resmi)
+1. **Price Radar:** Real-time price scanning across marketplaces.
+2. **Price Discovery:** Find the best deals for smarter buying.
+3. **Seller Intelligence:** Increase margins with data-driven insights.
+4. **Better Decisions:** For buyers and sellers.
 
 ---
 

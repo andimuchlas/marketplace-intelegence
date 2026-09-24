@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: "#FAFAF9", // Warm neutral off-white
+        canvas: "#F8FAFC", // Brand Identity Slate-50 Canvas Neutral
         surface: "#FFFFFF",
         primary: {
           50: "#f8fafc",

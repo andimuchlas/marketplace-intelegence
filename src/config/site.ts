@@ -1,8 +1,9 @@
 export const siteConfig = {
   name: 'Marketplace Intelligence Indonesia',
-  shortName: 'Kalkulator Margin',
+  shortName: 'MarketplaceIntel',
+  tagline: 'Smarter Prices. Higher Margins.',
   description:
-    'Kalkulator profit, komisi admin, dan perbandingan margin bersih marketplace Indonesia (Shopee, Tokopedia, TikTok Shop, Lazada). Hitung keuntungan bersih dan break-even harga jual secara instan dan akurat.',
+    'Smarter Prices. Higher Margins. Platform perbandingan harga live multi-marketplace (Shopee, Tokopedia, TikTok Shop, Lazada) dan kalkulator margin profit UMKM Indonesia.',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://kalkulatormarketplace.id',
   ogImage: '/og-image.png',
   author: 'Marketplace Intelligence Team',

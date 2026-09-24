@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { PriceRadarResult } from '@/domain/radar/types';
 import { RadarSearchBar } from './RadarSearchBar';
 import { RadarComparisonGrid } from './RadarComparisonGrid';
@@ -18,6 +19,7 @@ export function RadarClientContainer({
   initialResult,
   defaultQuery,
 }: RadarClientContainerProps) {
+  const router = useRouter();
   const [query, setQuery] = useState(defaultQuery);
   const [result, setResult] = useState<PriceRadarResult>(initialResult);
   const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +79,11 @@ export function RadarClientContainer({
 
       {/* Curated Trending Discovery */}
       <div className="mt-8 pt-6 border-t border-stone-200/80">
-        <CuratedTrendingGrid onSelectProduct={handleSearch} />
+        <CuratedTrendingGrid
+          onSelectProduct={(productName) =>
+            router.push(`/search?q=${encodeURIComponent(productName)}`)
+          }
+        />
       </div>
 
       {/* Bridge to Seller Calculator */}

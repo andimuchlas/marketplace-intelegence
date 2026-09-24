@@ -27,6 +27,7 @@ export function normalizeRadarOffers(
       lowestPrice: 0,
       highestPrice: 0,
       priceDelta: 0,
+      savingsPercentage: 0,
       winningMarketplaceId: 'shopee',
       winningMarketplaceName: 'Shopee',
       updatedAt: new Date().toISOString(),
@@ -45,12 +46,14 @@ export function normalizeRadarOffers(
   const lowestPrice = validOffers[0].currentPrice;
   const highestPrice = validOffers[validOffers.length - 1].currentPrice;
   const priceDelta = Math.max(0, highestPrice - lowestPrice);
+  const savingsPercentage = highestPrice > 0 ? Math.round((priceDelta / highestPrice) * 100) : 0;
 
   return {
     query,
     lowestPrice,
     highestPrice,
     priceDelta,
+    savingsPercentage,
     winningMarketplaceId: validOffers[0].marketplaceId,
     winningMarketplaceName: validOffers[0].marketplaceName,
     updatedAt: new Date().toISOString(),

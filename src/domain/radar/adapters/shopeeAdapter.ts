@@ -1,4 +1,5 @@
 import { MarketplaceAdapter, MarketplaceProductOffer } from '../types';
+import { generateMarketplaceMockCatalog } from '../mockCatalog';
 
 export class ShopeeAdapter implements MarketplaceAdapter {
   readonly marketplaceId = 'shopee';
@@ -32,7 +33,7 @@ export class ShopeeAdapter implements MarketplaceAdapter {
     const timestamp = Math.floor(Date.now() / 1000);
     const query = `
       query searchProducts($keyword: String!) {
-        productOfferV2(keyword: $keyword, page: 1, limit: 5) {
+        productOfferV2(keyword: $keyword, page: 1, limit: 10) {
           nodes {
             itemId
             productName
@@ -87,30 +88,7 @@ export class ShopeeAdapter implements MarketplaceAdapter {
   }
 
   private generateMockOffer(keyword: string): MarketplaceProductOffer[] {
-    // Generate deterministic price baseline based on keyword
-    const hash = keyword.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const basePrice = Math.max(50000, ((hash * 1234) % 800000) + 75000);
-    const currentPrice = Math.round(basePrice * 0.95); // 5% discount
-
-    return [
-      {
-        marketplaceId: this.marketplaceId,
-        marketplaceName: this.marketplaceName,
-        productId: `shopee-${hash}`,
-        title: `${keyword.toUpperCase()} (Original Garansi Resmi)`,
-        originalPrice: basePrice,
-        currentPrice,
-        discountPercentage: 5,
-        rating: 4.9,
-        totalSold: 3450,
-        shopName: 'Shopee Mall Official',
-        shopCity: 'Jakarta Barat',
-        isOfficialStore: true,
-        imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300',
-        affiliateUrl: `https://shopee.co.id/search?keyword=${encodeURIComponent(keyword)}&utm_source=radar_affiliate`,
-        isLowestPrice: false,
-      },
-    ];
+    return generateMarketplaceMockCatalog(this.marketplaceId, keyword);
   }
 }
 

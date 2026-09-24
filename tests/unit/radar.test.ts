@@ -64,6 +64,7 @@ describe('Radar Domain & Aggregator', () => {
       expect(result.lowestPrice).toBe(88000);
       expect(result.highestPrice).toBe(95000);
       expect(result.priceDelta).toBe(7000); // 95.000 - 88.000
+      expect(result.savingsPercentage).toBe(7); // round(7000 / 95000 * 100) = 7%
       expect(result.winningMarketplaceId).toBe('tokopedia');
       expect(result.winningMarketplaceName).toBe('Tokopedia');
 
@@ -82,6 +83,7 @@ describe('Radar Domain & Aggregator', () => {
       expect(result.lowestPrice).toBe(0);
       expect(result.highestPrice).toBe(0);
       expect(result.priceDelta).toBe(0);
+      expect(result.savingsPercentage).toBe(0);
     });
 
     it('enforces whole Rupiah integer rounding on prices', () => {
@@ -123,6 +125,18 @@ describe('Radar Domain & Aggregator', () => {
       const res2 = await radarAggregator.search(query);
       expect(res2.cached).toBe(true);
       expect(res2.lowestPrice).toBe(res1.lowestPrice);
+    });
+  });
+
+  describe('generateMarketplaceMockCatalog', () => {
+    it('generates 6 realistic offers per marketplace with proper attributes', async () => {
+      const { generateMarketplaceMockCatalog } = await import('@/domain/radar/mockCatalog');
+      const shopeeOffers = generateMarketplaceMockCatalog('shopee', 'baju');
+      expect(shopeeOffers).toHaveLength(6);
+      expect(shopeeOffers[0].marketplaceId).toBe('shopee');
+      expect(shopeeOffers[0].currentPrice).toBeGreaterThan(0);
+      expect(shopeeOffers[0].shopCity).toBeDefined();
+      expect(shopeeOffers[0].rating).toBeGreaterThanOrEqual(4.0);
     });
   });
 });

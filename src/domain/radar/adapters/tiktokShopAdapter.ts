@@ -1,4 +1,5 @@
 import { MarketplaceAdapter, MarketplaceProductOffer } from '../types';
+import { generateMarketplaceMockCatalog } from '../mockCatalog';
 
 export class TikTokShopAdapter implements MarketplaceAdapter {
   readonly marketplaceId = 'tiktok-shop';
@@ -64,30 +65,7 @@ export class TikTokShopAdapter implements MarketplaceAdapter {
   }
 
   private generateMockOffer(keyword: string): MarketplaceProductOffer[] {
-    const hash = keyword.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const basePrice = Math.max(50000, ((hash * 1234) % 800000) + 75000);
-    // TikTok Shop often has live/video creator discounts
-    const currentPrice = Math.round(basePrice * 0.92); // 8% discount
-
-    return [
-      {
-        marketplaceId: this.marketplaceId,
-        marketplaceName: this.marketplaceName,
-        productId: `tiktok-${hash}`,
-        title: `${keyword.toUpperCase()} (Live Special Deal / TikTok Mall)`,
-        originalPrice: basePrice,
-        currentPrice,
-        discountPercentage: 8,
-        rating: 4.8,
-        totalSold: 5120,
-        shopName: 'TikTok Shop Mall Official',
-        shopCity: 'Jakarta Selatan',
-        isOfficialStore: true,
-        imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300',
-        affiliateUrl: `https://shop.tiktok.com/search?q=${encodeURIComponent(keyword)}&utm_source=radar_affiliate`,
-        isLowestPrice: false,
-      },
-    ];
+    return generateMarketplaceMockCatalog(this.marketplaceId, keyword);
   }
 }
 

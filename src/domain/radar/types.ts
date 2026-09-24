@@ -23,6 +23,7 @@ export interface PriceRadarResult {
   lowestPrice: number;
   highestPrice: number;
   priceDelta: number;          // Potential savings: highest - lowest
+  savingsPercentage: number;   // Savings percentage e.g. 15 for 15%
   winningMarketplaceId: MarketplaceId;
   winningMarketplaceName: string;
   updatedAt: string;           // ISO 8601

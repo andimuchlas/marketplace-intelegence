@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, Loader2 } from 'lucide-react';
 import { GoogleIcon } from '@/components/ui/Icon';
 
 interface RadarSearchBarProps {
   initialQuery?: string;
-  onSearch: (query: string) => void;
+  onSearch?: (query: string) => void;
+  redirectToSearchPage?: boolean;
   isLoading?: boolean;
+  placeholder?: string;
 }
 
 const QUICK_SEARCH_CHIPS = [
@@ -22,20 +25,34 @@ const QUICK_SEARCH_CHIPS = [
 export function RadarSearchBar({
   initialQuery = '',
   onSearch,
+  redirectToSearchPage = true,
   isLoading = false,
+  placeholder = 'Cari barang untuk bandingkan harga (contoh: iPhone 15, Skintific, TWS Anker)...',
 }: RadarSearchBarProps) {
+  const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
+
+  const executeSearch = (targetQuery: string) => {
+    const trimmed = targetQuery.trim();
+    if (trimmed.length < 2) return;
+
+    if (onSearch) {
+      onSearch(trimmed);
+    }
+
+    if (redirectToSearchPage) {
+      router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+    }
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (query.trim().length >= 2) {
-      onSearch(query.trim());
-    }
+    executeSearch(query);
   };
 
   const handleChipClick = (chip: string) => {
     setQuery(chip);
-    onSearch(chip);
+    executeSearch(chip);
   };
 
   return (

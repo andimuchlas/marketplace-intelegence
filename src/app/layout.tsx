@@ -4,6 +4,7 @@ import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { siteConfig } from '@/config/site';
+import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -58,6 +59,9 @@ export const metadata: Metadata = {
     locale: 'id_ID',
     type: 'website',
   },
+  other: {
+    'google-adsense-account': 'ca-pub-2244563747369803',
+  },
 };
 
 export default function RootLayout({
@@ -70,6 +74,14 @@ export default function RootLayout({
       lang="id"
       className={`${fontDisplay.variable} ${fontBody.variable} ${fontMono.variable} scroll-smooth`}
     >
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2244563747369803"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className="min-h-screen bg-canvas font-body text-primary-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
         <div className="flex min-h-screen flex-col">
           <Header />

@@ -14,7 +14,7 @@ export interface AdSlotConfig {
 export const ADS_CONFIG = {
   // Global feature flag: controlled via environment variable
   enabled: process.env.NEXT_PUBLIC_ADS_ENABLED !== 'false',
-  clientId: process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || '',
+  clientId: process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || 'ca-pub-2244563747369803',
   slots: {
     top: {
       position: 'top',

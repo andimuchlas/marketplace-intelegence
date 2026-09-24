@@ -138,5 +138,13 @@ describe('Radar Domain & Aggregator', () => {
       expect(shopeeOffers[0].shopCity).toBeDefined();
       expect(shopeeOffers[0].rating).toBeGreaterThanOrEqual(4.0);
     });
+
+    it('prioritizes real Shopee affiliate links for matching keywords from catalog', async () => {
+      const { generateMarketplaceMockCatalog } = await import('@/domain/radar/mockCatalog');
+      const shopeeOffers = generateMarketplaceMockCatalog('shopee', 'sandal');
+      expect(shopeeOffers).toHaveLength(6);
+      expect(shopeeOffers[0].affiliateUrl).toMatch(/^https:\/\/s\.shopee\.co\.id\//);
+      expect(shopeeOffers[0].productId).toMatch(/^shopee-aff-/);
+    });
   });
 });

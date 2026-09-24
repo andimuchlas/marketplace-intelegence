@@ -1,4 +1,5 @@
 import { MarketplaceId, MarketplaceProductOffer } from './types';
+import shopeeAffiliateCatalog from '@/data/shopeeAffiliateCatalog.json';
 
 interface ProductPreset {
   basePrice: number;
@@ -377,6 +378,85 @@ const MARKETPLACE_BASE_URLS: Record<MarketplaceId, (keyword: string) => string> 
   lazada: (q) => `https://www.lazada.co.id/catalog/?q=${encodeURIComponent(q)}&utm_source=radar_affiliate`,
 };
 
+interface ShopeeCatalogItem {
+  id: string;
+  name: string;
+  price: number;
+  priceStr: string;
+  sold: string;
+  shop: string;
+  commPct: number;
+  commPctStr: string;
+  comm: number;
+  commNominal: string;
+  productUrl: string;
+  affiliateUrl: string;
+  category: string;
+  imageUrl: string;
+}
+
+function parseSoldCount(soldStr: string): number {
+  if (!soldStr) return 1200;
+  const clean = soldStr.replace('+', '').trim().replace(',', '.');
+  if (clean.includes('RB')) {
+    return Math.round(parseFloat(clean.replace('RB', '')) * 1000);
+  }
+  if (clean.includes('JT')) {
+    return Math.round(parseFloat(clean.replace('JT', '')) * 1000000);
+  }
+  return parseInt(clean.replace(/[^0-9]/g, ''), 10) || 800;
+}
+
+function findShopeeAffiliateMatches(keyword: string, maxCount: number): MarketplaceProductOffer[] {
+  const tokens = keyword.toLowerCase().split(/\s+/).filter((t) => t.length >= 2);
+  if (tokens.length === 0) return [];
+
+  const catalog = shopeeAffiliateCatalog as ShopeeCatalogItem[];
+
+  const scored = catalog
+    .map((item) => {
+      const nameLower = item.name.toLowerCase();
+      const catLower = item.category.toLowerCase();
+      const shopLower = item.shop.toLowerCase();
+      let score = 0;
+
+      for (const token of tokens) {
+        if (nameLower.includes(token)) score += 10;
+        if (catLower.includes(token)) score += 5;
+        if (shopLower.includes(token)) score += 3;
+      }
+
+      return { item, score };
+    })
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score || b.item.commPct - a.item.commPct);
+
+  return scored.slice(0, maxCount).map(({ item }, index) => {
+    const originalPrice =
+      Math.round((item.price * (1 + (item.commPct / 100) * 1.5)) / 100) * 100 ||
+      Math.round(item.price * 1.25);
+    const discountPct = Math.min(Math.max(Math.round(item.commPct * 2), 10), 60);
+
+    return {
+      marketplaceId: 'shopee' as MarketplaceId,
+      marketplaceName: 'Shopee',
+      productId: `shopee-aff-${item.id}`,
+      title: item.name,
+      originalPrice,
+      currentPrice: item.price,
+      discountPercentage: discountPct,
+      rating: 4.8 + (index % 3) * 0.1,
+      totalSold: parseSoldCount(item.sold),
+      shopName: item.shop,
+      shopCity: 'Jakarta',
+      isOfficialStore: item.commPct >= 10,
+      imageUrl: item.imageUrl,
+      affiliateUrl: item.affiliateUrl,
+      isLowestPrice: false,
+    };
+  });
+}
+
 export function generateMarketplaceMockCatalog(
   marketplaceId: MarketplaceId,
   keyword: string
@@ -384,7 +464,48 @@ export function generateMarketplaceMockCatalog(
   const preset = resolveKeywordPreset(keyword);
   const variants = MARKETPLACE_VARIANTS[marketplaceId] || [];
   const marketplaceName = MARKETPLACE_NAMES[marketplaceId] || marketplaceId;
-  const urlBuilder = MARKETPLACE_BASE_URLS[marketplaceId] || ((q) => `https://google.com/search?q=${encodeURIComponent(q)}`);
+  const urlBuilder =
+    MARKETPLACE_BASE_URLS[marketplaceId] ||
+    ((q) => `https://google.com/search?q=${encodeURIComponent(q)}`);
+
+  // If shopee, prioritize real affiliate matches from CSV imported catalog
+  if (marketplaceId === 'shopee') {
+    const affiliateMatches = findShopeeAffiliateMatches(keyword, variants.length);
+    if (affiliateMatches.length > 0) {
+      const remainingSlots = variants.length - affiliateMatches.length;
+      if (remainingSlots <= 0) {
+        return affiliateMatches;
+      }
+
+      const proceduralPad = variants.slice(affiliateMatches.length).map((variant, index) => {
+        const rawCurrentPrice = Math.round(preset.basePrice * variant.priceMultiplier);
+        const currentPrice = Math.round(rawCurrentPrice / 100) * 100;
+        const originalPrice = Math.round(currentPrice / (1 - variant.discountPct / 100) / 100) * 100;
+        const imageUrl =
+          preset.imageUrls[(index + affiliateMatches.length) % preset.imageUrls.length];
+
+        return {
+          marketplaceId,
+          marketplaceName,
+          productId: `${marketplaceId}-${keyword.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${index + affiliateMatches.length + 1}`,
+          title: `${keyword.trim()} ${variant.titleSuffix}`,
+          originalPrice,
+          currentPrice,
+          discountPercentage: variant.discountPct,
+          rating: variant.rating,
+          totalSold: variant.sold,
+          shopName: `${variant.shopPrefix} (${marketplaceName})`,
+          shopCity: variant.city,
+          isOfficialStore: variant.isOfficial,
+          imageUrl,
+          affiliateUrl: urlBuilder(keyword),
+          isLowestPrice: false,
+        };
+      });
+
+      return [...affiliateMatches, ...proceduralPad];
+    }
+  }
 
   return variants.map((variant, index) => {
     const rawCurrentPrice = Math.round(preset.basePrice * variant.priceMultiplier);

@@ -235,8 +235,8 @@ async function run() {
 
       await db.insert(promotions).values({
         title: cleanTitle,
-        subtitle: `Toko: ${item.shop} • Terjual: ${item.sold} • Komisi XTRA ${item.commPctStr}`,
-        badge: `Komisi XTRA ${item.commPctStr}`,
+        subtitle: `Toko: ${item.shop} • Terjual: ${item.sold} • Gratis Ongkir XTRA`,
+        badge: `Diskon ${discountPercent}%`,
         marketplace: 'shopee',
         type: 'product_spotlight',
         imageUrl: item.imageUrl,

@@ -10,6 +10,19 @@ const ClickQuerySchema = z.object({
   targetUrl: z.string().url('URL tujuan tidak valid'),
 });
 
+const PostBeaconSchema = z.object({
+  marketplace: z.string().min(1),
+  productId: z.string().min(1),
+  query: z.string().optional(),
+});
+
+function isBotRequest(request: NextRequest): boolean {
+  const userAgent = request.headers.get('user-agent')?.toLowerCase() || '';
+  return /bot|crawler|spider|slurp|facebookexternalhit|headlesschrome|python|curl|wget|scanner|semrush|ahrefs|seobility|seoptimer|screaming/i.test(
+    userAgent
+  );
+}
+
 export async function GET(request: NextRequest) {
   const forwardedFor = request.headers.get('x-forwarded-for');
   const clientIp = forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1';
@@ -37,9 +50,29 @@ export async function GET(request: NextRequest) {
 
   const { marketplace, productId, q, targetUrl } = validation.data;
 
-  // Fire-and-forget logging to Neon
-  recordAffiliateClick(marketplace, productId, q);
+  // Filter out automated bot crawlers to protect DB and analytics integrity
+  if (!isBotRequest(request)) {
+    recordAffiliateClick(marketplace, productId, q);
+  }
 
-  // Perform redirect with security and affiliate tracking attributes
-  return NextResponse.redirect(targetUrl, 302);
+  // Perform redirect with security and affiliate tracking attributes + noindex tag
+  const response = NextResponse.redirect(targetUrl, 302);
+  response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  return response;
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const json = await request.json();
+    const validation = PostBeaconSchema.safeParse(json);
+
+    if (validation.success && !isBotRequest(request)) {
+      const { marketplace, productId, query } = validation.data;
+      recordAffiliateClick(marketplace, productId, query);
+    }
+
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ success: false }, { status: 400 });
+  }
 }

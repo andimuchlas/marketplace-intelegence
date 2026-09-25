@@ -23,17 +23,17 @@ export function Footer() {
               Platform intelijen harga dan utilitas finansial e-commerce Indonesia. Membantu konsumen menemukan harga termurah serta membantu UMKM menghitung margin laba bersih secara transparan.
             </p>
             <div className="mt-4 flex flex-wrap gap-2 text-xs text-primary-400">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-200/60 px-2.5 py-0.5 font-medium text-stone-700">
-                <MarketplaceIcon id="shopee" size={14} /> Shopee
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200/80 bg-white/80 px-2.5 py-1 font-medium text-stone-700 shadow-2xs">
+                <MarketplaceIcon id="shopee" size={16} /> Shopee
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-200/60 px-2.5 py-0.5 font-medium text-stone-700">
-                <MarketplaceIcon id="tokopedia" size={14} /> Tokopedia
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200/80 bg-white/80 px-2.5 py-1 font-medium text-stone-700 shadow-2xs">
+                <MarketplaceIcon id="tokopedia" size={16} /> Tokopedia
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-200/60 px-2.5 py-0.5 font-medium text-stone-700">
-                <MarketplaceIcon id="tiktok-shop" size={14} /> TikTok Shop
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200/80 bg-white/80 px-2.5 py-1 font-medium text-stone-700 shadow-2xs">
+                <MarketplaceIcon id="tiktok-shop" size={16} /> TikTok Shop
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-200/60 px-2.5 py-0.5 font-medium text-stone-700">
-                <MarketplaceIcon id="lazada" size={14} /> Lazada
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-200/80 bg-white/80 px-2.5 py-1 font-medium text-stone-700 shadow-2xs">
+                <MarketplaceIcon id="lazada" size={16} /> Lazada
               </span>
             </div>
           </div>

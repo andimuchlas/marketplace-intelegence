@@ -170,7 +170,7 @@ export function MarketplaceCalculator({
                       : 'text-primary-600 hover:text-primary-900'
                   }`}
                 >
-                  <MarketplaceIcon id={m.id} size={16} />
+                  <MarketplaceIcon id={m.id} size={18} />
                   <span>{m.name}</span>
                   {isSelected && (
                     <motion.div

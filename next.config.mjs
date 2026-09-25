@@ -72,6 +72,11 @@ const nextConfig = {
         destination: '/seller/komparasi-fee/tokopedia-vs-tiktok-shop',
         permanent: true,
       },
+      {
+        source: '/robot.txt',
+        destination: '/robots.txt',
+        permanent: true,
+      },
     ];
   },
 };

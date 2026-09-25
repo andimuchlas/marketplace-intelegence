@@ -45,6 +45,64 @@ function HeaderSearchInput() {
   );
 }
 
+function MobileModeDropdown({ isSeller }: { isSeller: boolean }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative sm:hidden">
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="flex items-center gap-1 rounded-lg border border-stone-200/90 bg-white/90 px-2.5 py-1 text-xs font-semibold text-primary-900 shadow-2xs hover:bg-stone-50 active:scale-95 transition-all"
+        aria-label="Pilih Mode Pengguna"
+        aria-expanded={isOpen}
+      >
+        <span>{isSeller ? 'Penjual' : 'Pembeli'}</span>
+        <GoogleIcon
+          name="expand_more"
+          size={15}
+          className={`text-stone-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        />
+      </button>
+
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="absolute left-0 mt-1.5 w-40 rounded-xl border border-stone-200 bg-white p-1 shadow-lg ring-1 ring-black/5 z-50 animate-in fade-in zoom-in-95 duration-100">
+            <Link
+              href="/"
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-semibold transition-colors ${
+                !isSeller
+                  ? 'bg-primary-900 text-white font-bold'
+                  : 'text-stone-700 hover:bg-stone-100'
+              }`}
+            >
+              <span>Pembeli (Radar)</span>
+              {!isSeller && <GoogleIcon name="check" size={14} className="text-emerald-400" />}
+            </Link>
+            <Link
+              href="/seller"
+              onClick={() => setIsOpen(false)}
+              className={`mt-0.5 flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-semibold transition-colors ${
+                isSeller
+                  ? 'bg-emerald-700 text-white font-bold'
+                  : 'text-stone-700 hover:bg-stone-100'
+              }`}
+            >
+              <span>Penjual (Kalkulator)</span>
+              {isSeller && <GoogleIcon name="check" size={14} className="text-emerald-200" />}
+            </Link>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function Header() {
   const pathname = usePathname();
   const isSeller = pathname.startsWith('/seller');
@@ -52,28 +110,31 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-stone-200/80 bg-canvas/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo */}
-        <div className="flex items-center gap-4 sm:gap-8 shrink-0">
-          <Link href="/" className="group flex items-center gap-2.5 transition-opacity hover:opacity-90">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
+        {/* Brand Logo & Switcher */}
+        <div className="flex items-center gap-2 sm:gap-8 shrink-0">
+          <Link href="/" className="group flex items-center gap-2 transition-opacity hover:opacity-90">
             <img
               src="/logo-icon.png"
               alt="MarketplaceIntel Logo"
-              className="h-9 w-9 shrink-0 object-contain transition-transform group-hover:scale-105"
+              className="h-8 w-8 sm:h-9 sm:w-9 shrink-0 object-contain transition-transform group-hover:scale-105"
             />
             <div className="flex flex-col">
-              <span className="font-display text-base font-bold tracking-tight text-primary-900 sm:text-lg">
+              <span className="font-display text-sm font-bold tracking-tight text-primary-900 sm:text-lg">
                 Marketplace<span className="text-emerald-600">Intel</span>
               </span>
-              <span className="text-[10px] font-medium tracking-wide text-primary-500 uppercase">
-                {isSeller ? 'Portal Penjual' : isSearch ? 'Katalog Radar Harga' : 'Radar Harga Indonesia'}
+              <span className="text-[9px] font-medium tracking-wide text-primary-500 uppercase sm:text-[10px]">
+                {isSeller ? 'Portal Penjual' : isSearch ? 'Katalog Radar' : 'Radar Harga'}
               </span>
             </div>
           </Link>
 
-          {/* Clean Segment Switcher Tabs with Underline (HIDDEN on /search per buyer focus) */}
+          {/* Mobile Mode Dropdown (Pembeli / Penjual) */}
+          {!isSearch && <MobileModeDropdown isSeller={isSeller} />}
+
+          {/* Clean Segment Switcher Tabs with Underline (DESKTOP ONLY) */}
           {!isSearch && (
-            <nav className="flex items-center gap-4 text-sm font-semibold sm:gap-6">
+            <nav className="hidden sm:flex items-center gap-4 text-sm font-semibold sm:gap-6">
               <Link
                 href="/"
                 className={`relative py-5 transition-colors ${
@@ -178,21 +239,45 @@ export function Header() {
           {/* Action Button CTA (Hidden on /search to avoid clutter) */}
           {!isSearch &&
             (isSeller ? (
-              <Link
-                href="/seller/kalkulator"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-emerald-800 active:scale-95"
-              >
-                <GoogleIcon name="calculate" size={15} className="text-emerald-200" />
-                <span>Hitung Margin</span>
-              </Link>
+              <>
+                {/* Desktop Full Button */}
+                <Link
+                  href="/seller/kalkulator"
+                  className="hidden sm:inline-flex items-center gap-1.5 rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-emerald-800 active:scale-95"
+                >
+                  <GoogleIcon name="calculate" size={15} className="text-emerald-200" />
+                  <span>Hitung Margin</span>
+                </Link>
+                {/* Mobile Icon Button */}
+                <Link
+                  href="/seller/kalkulator"
+                  className="sm:hidden flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-700 text-white shadow-2xs hover:bg-emerald-800 active:scale-95 transition-all"
+                  title="Hitung Margin"
+                  aria-label="Hitung Margin"
+                >
+                  <GoogleIcon name="calculate" size={16} />
+                </Link>
+              </>
             ) : (
-              <Link
-                href="/"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-primary-900 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-800 active:scale-95"
-              >
-                <GoogleIcon name="search" size={15} className="text-emerald-400" />
-                <span>Cari Harga Termurah</span>
-              </Link>
+              <>
+                {/* Desktop Full Button */}
+                <Link
+                  href="/#search"
+                  className="hidden sm:inline-flex items-center gap-1.5 rounded-lg bg-primary-900 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-800 active:scale-95"
+                >
+                  <GoogleIcon name="search" size={15} className="text-emerald-400" />
+                  <span>Cari Harga Termurah</span>
+                </Link>
+                {/* Mobile Icon Button */}
+                <Link
+                  href="/#search"
+                  className="sm:hidden flex h-8 w-8 items-center justify-center rounded-lg bg-primary-900 text-emerald-400 shadow-2xs hover:bg-primary-800 active:scale-95 transition-all"
+                  title="Cari Harga Termurah"
+                  aria-label="Cari Harga"
+                >
+                  <GoogleIcon name="search" size={16} />
+                </Link>
+              </>
             ))}
         </div>
       </div>

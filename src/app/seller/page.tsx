@@ -126,7 +126,7 @@ export default function SellerPortalPage() {
             {/* Shopee Card */}
             <div className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-orange-300 hover:shadow-elevated">
               <div className="flex items-center justify-between">
-                <MarketplaceIcon id="shopee" size={24} withBackground />
+                <MarketplaceIcon id="shopee" size={28} withBackground />
                 <span className="rounded-full bg-orange-50 px-2.5 py-0.5 text-[10px] font-bold text-orange-700">
                   Fashion & FMCG
                 </span>
@@ -152,7 +152,7 @@ export default function SellerPortalPage() {
             {/* Tokopedia Card */}
             <div className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-emerald-300 hover:shadow-elevated">
               <div className="flex items-center justify-between">
-                <MarketplaceIcon id="tokopedia" size={24} withBackground />
+                <MarketplaceIcon id="tokopedia" size={28} withBackground />
                 <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700">
                   Gadget & Home
                 </span>
@@ -178,7 +178,7 @@ export default function SellerPortalPage() {
             {/* TikTok Shop Card */}
             <div className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-stone-400 hover:shadow-elevated">
               <div className="flex items-center justify-between">
-                <MarketplaceIcon id="tiktok-shop" size={24} withBackground />
+                <MarketplaceIcon id="tiktok-shop" size={28} withBackground />
                 <span className="rounded-full bg-stone-100 px-2.5 py-0.5 text-[10px] font-bold text-stone-800">
                   Live & Affiliate
                 </span>
@@ -204,7 +204,7 @@ export default function SellerPortalPage() {
             {/* Lazada Card */}
             <div className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-card transition-all hover:border-blue-300 hover:shadow-elevated">
               <div className="flex items-center justify-between">
-                <MarketplaceIcon id="lazada" size={24} withBackground />
+                <MarketplaceIcon id="lazada" size={28} withBackground />
                 <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold text-blue-700">
                   LazMall & Brand
                 </span>
